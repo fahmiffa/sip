@@ -12,6 +12,10 @@ use App\Models\User;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('IsPermission:master');
+    }
     /**
      * Display a listing of the resource.
      */

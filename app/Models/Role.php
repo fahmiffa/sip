@@ -13,12 +13,17 @@ class Role extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'role','id');     
+        return $this->HasMany(User::class, 'role','id');     
     }
 
     public function permit()
     {
         return $this->permission;
+    }
+
+    public function getLevelAttribute()
+    {
+
     }
 
 

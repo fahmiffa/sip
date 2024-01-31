@@ -14,8 +14,7 @@
                     <div class="p-2">
                         <h5 class="card-title">Data {{$data}}</h5>
                     </div>
-                    <div class="p-2">
-                        <a href="{{route('verifikasi.create')}}" class="btn btn-primary btn-sm">Tambah {{$data}}</a>
+                    <div class="p-2">                     
                     </div>
                 </div>       
             </div>
@@ -25,28 +24,23 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Nomor</th>  
-                                <th>Verifikator</th>      
+                                <th>Nomor</th>                            
                                 <th>Tipe</th>                                      
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($da as $item)
+                            @if($item->role)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$item->nomor}}</td>   
-                                <td>{!! ucfirst(implode("<br>",$item->verif)) !!}</td>   
+                                <td>{{$item->nomor}}</td>     
                                 <td>{{ucfirst($item->type)}}</td>                                      
                                 <td>                
-                                    <form onsubmit="return confirm('Apakah Anda Yakin Menghapus ?');" action="{{ route('verifikasi.destroy', $item->id) }}" method="POST">
-                                        <a href="{{ route('verifikasi.edit', $item->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>                                       
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-                                    </form>
+                                    <a href="{{ route('step.verifikasi', ['id'=>md5($item->id)]) }}" class="btn btn-sm btn-primary"><i class="bi bi-files"></i></a>                                                                         
                                 </td>                    
                             </tr>            
+                            @endif
                             @endforeach      
                         </tbody>
                     </table>

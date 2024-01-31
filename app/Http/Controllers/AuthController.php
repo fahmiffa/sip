@@ -261,7 +261,7 @@ class AuthController extends Controller
 
                 if (Auth::attempt($credensil)) {
                     $user = Auth::user();                                          
-                    return redirect()->to('home');  
+                    return redirect()->route('main');  
                     
                 }                                      
                 toastr()->error('Akun tidak ditemukan', ['timeOut' => 5000]);

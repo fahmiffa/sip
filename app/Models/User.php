@@ -47,22 +47,23 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->hasOne(Role::class, 'id','role');
+        return $this->belongsTo(Role::class, 'role','id');   
     }
 
     public function ijin($per)
     {
+     
+        $permit = explode(',', $this->roles->permission);  
+        $par = Permission::whereIn('id',$permit)->where('parameter',$per)->first();
 
-        $permit = explode(',', $this->roles->permission);
-        // dd($permit);
-        $par = Permission::whereIn('id',$permit)->where('parameter',$per)->get();
-
-        return false;
-
-        // foreach($permit as $item)
-        // {
-        // }
-
+        if($par)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }        
         
     }
 }

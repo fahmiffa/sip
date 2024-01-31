@@ -127,7 +127,7 @@ class FormulirController extends Controller
     {
         $rule = [                   
             'name' => 'required', 
-            'title'=> 'required',                                       
+            'type'=> 'required',                                       
             ];
 
         $request->validate($rule);

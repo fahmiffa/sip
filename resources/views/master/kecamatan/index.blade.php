@@ -15,7 +15,7 @@
                         <h5 class="card-title">Data {{$data}}</h5>
                     </div>
                     <div class="p-2">
-                        <a href="{{route('verifikasi.create')}}" class="btn btn-primary btn-sm">Tambah {{$data}}</a>
+                        <a href="{{route('kecamatan.create')}}" class="btn btn-primary btn-sm">Tambah {{$data}}</a>
                     </div>
                 </div>       
             </div>
@@ -25,9 +25,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Nomor</th>  
-                                <th>Verifikator</th>      
-                                <th>Tipe</th>                                      
+                                <th>Name</th>                                       
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -35,12 +33,10 @@
                             @foreach($da as $item)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$item->nomor}}</td>   
-                                <td>{!! ucfirst(implode("<br>",$item->verif)) !!}</td>   
-                                <td>{{ucfirst($item->type)}}</td>                                      
+                                <td>{{$item->name}}</td>                                                        
                                 <td>                
-                                    <form onsubmit="return confirm('Apakah Anda Yakin Menghapus ?');" action="{{ route('verifikasi.destroy', $item->id) }}" method="POST">
-                                        <a href="{{ route('verifikasi.edit', $item->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>                                       
+                                    <form onsubmit="return confirm('Apakah Anda Yakin Menghapus ?');" action="{{ route('kecamatan.destroy', $item->id) }}" method="POST">
+                                        <a href="{{ route('kecamatan.edit', $item->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>                                                                            
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>

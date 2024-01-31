@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{env('APP_NAME')}}</title>
+
+    <meta content="{{env('APP_DES')}}" name="description">
+    <meta content="{{env('APP_NAME')}}" name="keywords">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     
     <link rel="shortcut icon" href="{{asset('assets/logo.png')}}" type="image/x-icon">    
     <link rel="stylesheet" href="{{asset('assets/compiled/css/app.css')}}">
@@ -79,7 +83,7 @@
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
                                             <h6 class="mb-0 text-gray-600">{{auth()->user()->name}}</h6>
-                                            <p class="mb-0 text-sm text-gray-600">Administrator</p>
+                                            <p class="mb-0 text-sm text-gray-600">{{auth()->user()->roles->name}}</p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
@@ -126,5 +130,19 @@
     <script src="{{asset('assets/compiled/js/app.js')}}"></script>
 
 @stack('js')
+
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+
+    function prev() {
+        document.getElementById('back').submit();
+    }
+
+    // document.getElementById('button-back').addEventListener('click',function(e){        
+    // });
+</script>
 </body>
 </html>

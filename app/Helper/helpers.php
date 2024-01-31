@@ -1,8 +1,8 @@
 <?php 
 use App\Models\Value;
 use Intervention\Image\Facades\Image as Image;
-use App\Models\Formulir;
 use Carbon\Carbon;
+use App\Models\Head;
 
 function headers($id,$index,$val)
 { 
@@ -40,9 +40,16 @@ function gambar($val)
     return $imageData;
 }
 
-function nomor($nextNumber)
+function nomor()
 {
-    return str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+    $num = Head::get()->count();               
+    $nom = str_pad($num, 4, '0', STR_PAD_LEFT);
+    return '600.1.15/'.$nom.'/SPm-SIMBG/'.numberToRoman(date('m')).'/'.date('Y');
+}
+
+function baseDoc()
+{
+    return ['menara','umum'];
 }
 
 function Abjad($index)

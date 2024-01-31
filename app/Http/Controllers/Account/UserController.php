@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('IsPermission:admin');
+        $this->middleware('IsPermission:master');
     }
     /**
      * Display a listing of the resource.

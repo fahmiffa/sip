@@ -14,17 +14,25 @@ use App\Http\Controllers\Account\UserController;
 |
 */
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
+Route::get('/', [App\Http\Controllers\AuthController::class, 'login'])->name('home');
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'log'])->name('sign');
 Route::get('/daftar', [App\Http\Controllers\AuthController::class, 'reg'])->name('daftar');
 Route::post('/daftar', [App\Http\Controllers\AuthController::class, 'daftar'])->name('reg');
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => 'auth'], function() {    
     Route::group(['prefix'=>'home'],function() {
-        Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');      
+        Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('main');      
     });
 
+    Route::group(['prefix'=>'verifikator'],function() {        
+        Route::resource('verification', App\Http\Controllers\VerificationController::class);  
+        Route::get('verifikasi-step/{id}', [App\Http\Controllers\VerificationController::class, 'step'])->name('step.verifikasi');  
+        Route::post('next-step/{id}', [App\Http\Controllers\VerificationController::class, 'next'])->name('next.verifikasi');    
+        Route::post('back-step/{id}', [App\Http\Controllers\VerificationController::class, 'back'])->name('back.verifikasi');  
+        Route::post('village}', [App\Http\Controllers\VerificationController::class, 'village'])->name('village');        
+    });   
+    });
 
     Route::group(['prefix'=>'master'],function() {   
         Route::group(['prefix'=>'account'],function() {   
@@ -41,6 +49,8 @@ Route::group(['middleware' => 'auth'], function() {
             Route::resource('item', App\Http\Controllers\Item\ItemController::class);     
             Route::resource('sub', App\Http\Controllers\Item\SubController::class);         
         });    
+        Route::resource('kecamatan', App\Http\Controllers\DistrictController::class);  
+        Route::resource('desa', App\Http\Controllers\VillageController::class);  
     
         // Route::group(['prefix'=>'formulir'],function() {   
         //     Route::resource('document', App\Http\Controllers\DocumentController::class);  
@@ -50,10 +60,8 @@ Route::group(['middleware' => 'auth'], function() {
         // });
     });
 
-
     Route::group(['prefix'=>'dokumen'],function() {   
-        Route::resource('document', App\Http\Controllers\HeadController::class);  
-    });
+        Route::resource('verifikasi', App\Http\Controllers\HeadController::class);     
 });
 
 

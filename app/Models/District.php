@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class District extends Model
 {
     use HasFactory;
+
+    public function desa()
+    {
+        return $this->hasMany(Village::class, 'districts_id', 'id');  
+    }
 }

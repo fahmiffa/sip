@@ -1,16 +1,27 @@
 <ul class="menu">                                              
-    <li class="sidebar-item {{ (request()->routeIs('home')) ? 'active' : null }}">
-        <a href="{{route('home')}}" class='sidebar-link'>
+    <li class="sidebar-item {{ (request()->routeIs('main')) ? 'active' : null }}">
+        <a href="{{route('main')}}" class='sidebar-link'>
             <i class="bi bi-grid-fill"></i>
             <span>Dashboard</span>
         </a>                            
     </li>                        
 
-    <li class="sidebar-item {{ (request()->routeIs('document.index')) ? 'active' : null }}">
-        <a href="{{route('document.index')}}" class='sidebar-link'>
-            <i class="bi bi-files"></i>
+    <li class="sidebar-item has-sub {{ (Request::segment(1)) == 'dokumen' ? 'active' : null }}">
+        <a href="#" class="sidebar-link">
+            <i class="bi bi-files"></i> 
             <span>Dokumen</span>
-        </a>                            
+        </a>            
+        <ul class="submenu submenu-{{ (Request::segment(1)) == 'dokumen' ? 'open' : 'closed' }}" style="--submenu-height: 86px;">                 
+
+            <li class="submenu-item {{ (request()->routeIs('verifikasi.index')) ? 'active' : null }}">
+                <a href="{{route('verifikasi.index')}}" class="submenu-link">Verifikasi</a>                                           
+            </li>
+            
+            <li class="submenu-item {{ (request()->routeIs('verification.index')) ? 'active' : null }}">
+                <a href="{{route('verification.index')}}" class="submenu-link">Verifikator</a>                                           
+            </li>
+            
+        </ul>            
     </li>
     
     <li class="sidebar-item has-sub {{ (Request::segment(1)) == 'master' ? 'active' : null }}">
@@ -61,7 +72,18 @@
                     </li>                                            
                 </ul>                
             </li>
+
+            <li class="submenu-item {{ (request()->routeIs('kecamatan.index')) ? 'active' : null }}">
+                <a href="{{route('kecamatan.index')}}" class="submenu-link">Kecamatan</a>                                           
+            </li>
+
+            <li class="submenu-item {{ (request()->routeIs('desa.index')) ? 'active' : null }}">
+                <a href="{{route('desa.index')}}" class="submenu-link">Desa</a>                                           
+            </li>
             
         </ul>            
     </li>
+
+            
+
 </ul>

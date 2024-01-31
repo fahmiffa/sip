@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('IsPermission:master');
+    }
     /**
      * Display a listing of the resource.
      */
