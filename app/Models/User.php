@@ -52,18 +52,25 @@ class User extends Authenticatable
 
     public function ijin($per)
     {
-     
-        $permit = explode(',', $this->roles->permission);  
-        $par = Permission::whereIn('id',$permit)->where('parameter',$per)->first();
-
-        if($par)
+        if($this->roles->kode == 'SU')
         {
             return true;
         }
         else
         {
-            return false;
-        }        
+            $permit = explode(',', $this->roles->permission);  
+            $par = Permission::whereIn('id',$permit)->where('parameter',$per)->first();
+    
+            if($par)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }        
+        }
+     
         
     }
 }

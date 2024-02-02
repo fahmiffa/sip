@@ -24,20 +24,32 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Nomor</th>                            
-                                <th>Tipe</th>                                      
+                                <th>Nomor</th>                                                    
+                                <th>Tipe</th>                                                         
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($da as $item)
-                            @if($item->role)
+                            @if($item->task)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$item->nomor}}</td>     
+                                <td>{{$item->nomor}}</td>                   
                                 <td>{{ucfirst($item->type)}}</td>                                      
                                 <td>                
-                                    <a href="{{ route('step.verifikasi', ['id'=>md5($item->id)]) }}" class="btn btn-sm btn-primary"><i class="bi bi-files"></i></a>                                                                         
+                                    @if($item->status == 1)
+                                        <a target="_blank" href="{{ route('doc.verifikator', ['id'=>md5($item->id)]) }}" class="btn btn-sm btn-danger"><i class="bi bi-file-pdf"></i></a>                                                                                                                                        
+                                    @else      
+                                        @if($item->step == 2)
+                                            @foreach($item->steps as $val)
+                                                @if($val->kode != auth()->user()->roles->kode)
+                                                    <a href="{{ route('step.verifikasi', ['id'=>md5($item->id)]) }}" class="btn btn-sm btn-primary"><i class="bi bi-files"></i></a>                                                                         
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <a href="{{ route('step.verifikasi', ['id'=>md5($item->id)]) }}" class="btn btn-sm btn-primary"><i class="bi bi-files"></i></a>                                                                         
+                                        @endif                       
+                                    @endif                                        
                                 </td>                    
                             </tr>            
                             @endif

@@ -11,9 +11,9 @@
             <label>Pengajuan</label>
             <select class="form-control" name="pengajuan" placeholder="Pengajuan">
                 <option value="">Pilih Pengajuan</option>
-                <option value="pbg">PBG</option>
-                <option value="slf">SLF</option>
-                <option value="Lainnya">Lainnya</option>
+                <option value="pbg" @selected(old('pengajuan') == 'pbg')>PBG</option>
+                <option value="slf" @selected(old('pengajuan') == 'slf')>SLF</option>
+                <option value="lainnya" @selected(old('pengajuan') == 'lainnya') >Lainnya</option>
             </select>
             @error('pengajuan')<div class='small text-danger text-left'>{{ $message }}</div>@enderror
         </div>
@@ -69,8 +69,8 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label>Fungsi</label>
+        <div class="form-group mb-3">    
+            <label id="con">Fungsi</label>
             <input type="text" name="fungsi" value="{{old('fungsi')}}" class="form-control">
             @error('fungsi')<div class='small text-danger text-left'>{{ $message }}</div>@enderror
         </div>

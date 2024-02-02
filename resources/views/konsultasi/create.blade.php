@@ -17,52 +17,37 @@
 
             <div class="card-body">
 
-                @isset($verifikasi)
-                <form action="{{route('verifikasi.update',['verifikasi'=>$verifikasi])}}" method="post">                            
+                @isset($consultation)
+                <form action="{{route('consultation.update',['consultation'=>$consultation])}}" method="post">                            
                 @method('PATCH')   
                 @else                                      
-                    <form action="{{route('verifikasi.store')}}" method="post">                               
+                    <form action="{{route('consultation.store')}}" method="post">                               
                 @endif                    
                     @csrf           
                     <div class="px-5">
-                        <div class="form-group row mb-3">
-                            <div class="col-md-6">
-                                <label>No Dokumen</label>
-                                @if(old('name'))
-                                    <input type="text" name="name" value="{{old('name')}}" class="form-control">             
-                                @else
-                                    <input type="text" name="name" value="{{isset($verifikasi) ? $verifikasi->nomor : nomor()}}"   class="form-control">             
-                                @endif                                
-                                @error('name')<div class='small text-danger text-left'>{{$message}}</div>@enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label>Jenis</label>              
-                                <select class="choices form-select" name="type" id="type">
-                                    <option value="">Pilih Jenis</option>
-                                    @php $doc = baseDoc();  @endphp                                    
-                                    @foreach($doc as $item)
-                                    @if(old('type'))
-                                        <option value="{{$item}}"  @selected(old('type') == $item) >{{ucfirst($item)}}</option>
-                                    @else
-                                        <option value="{{$item}}"  @selected(isset($verifikasi) && $verifikasi->type == $item) >{{ucfirst($item)}}</option>
-                                    @endif
+                        <div class="form-group row mb-3">     
+                            
+                        <div class="form-group row mb-3">        
+                            <div class="col-md-8 mb-3">
+                                <label>Pilih Dokumen</label>              
+                                <select class="choices form-select" name="doc">
+                                    <option value="">Pilih Dokumen</option>                                                                                            
+                                    @foreach($doc as $item)                                                            
+                                        <option value="{{$item->id}}"  @selected(isset($consultation) && $consultation->head == $item->id) >{{$item->nomor}}</option>                                 
                                     @endforeach                       
                                 </select>
-                                @error('type')<div class='small text-danger text-left'>{{$message}}</div>@enderror
-                            </div>
-                        </div>                                   
-
-                        @include('document.header')
+                                @error('doc')<div class='small text-danger text-left'>{{$message}}</div>@enderror
+                            </div>                  
+                        </div>
                                                 
                         <div class="form-group row mb-3">        
                             <div class="col-md-8 mb-3">
-                                <label>Verifikator</label>              
-                                <select class="choices form-select multiple-remove" name="verifikator[]" multiple="multiple">
-                                    <option value="">Pilih Verifikator</option>                                                                                            
+                                <label>Tim Konsultasi</label>              
+                                <select class="choices form-select multiple-remove" name="konsultan[]" multiple="multiple">
+                                    <option value="">Pilih Konsultan</option>                                                                                            
                                     @foreach($user as $item)                         
-                                            @isset($verifikasi);       
-                                                @php $var = explode(",",$verifikasi->verifikator);                                  
+                                            @isset($consultation);       
+                                                @php $var = explode(",",$consultation->konsultan);                                  
                                                 @endphp                                                     
                                                 <optgroup label="{{$item->name}}">
                                                     @foreach($item->user as $val)                                                
@@ -80,7 +65,7 @@
                                             @endisset
                                     @endforeach                       
                                 </select>
-                                @error('verifikator')<div class='small text-danger text-left'>{{$message}}</div>@enderror
+                                @error('konsultan')<div class='small text-danger text-left'>{{$message}}</div>@enderror
                             </div>     
                             <div class="col-md-12" >
                                 <button class="btn btn-primary rounded-pill">Save</button>

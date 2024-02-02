@@ -47,18 +47,9 @@
 
                         <div class="form-group row mb-3">
                             <div class="col-md-12">
-                               <textarea name="editor" id="editor" class="form-control"></textarea>
+                               <textarea name="content" id="editor" class="form-control">{!! isset($footer) ? $footer->item : null !!}</textarea>
                             </div>
                         </div>
-
-                        <div class="form-group row mb-3">
-                            <div class="col-md-12">
-                                <p>Item Footer</p>
-                                <input type="hidden" name="content">
-                                 <div id="snow">{!! isset($footer) ? $footer->item : null !!}</div>
-                            </div>
-                        </div>
-                        
               
     
                         <div style="height: 4rem"></div>
@@ -91,27 +82,6 @@
 <script src="{{asset('assets/extensions/summernote/summernote-lite.min.js')}}"></script>
 
 <script>
-
-$("#editor").summernote({
-  tabsize: 2,
-  height: 800,
-})
-$("#hint").summernote({
-  height: 100,
-  toolbar: false,
-  placeholder: "type with apple, orange, watermelon and lemon",
-  hint: {
-    words: ["apple", "orange", "watermelon", "lemon"],
-    match: /\b(\w{1,})$/,
-    search: function (keyword, callback) {
-      callback(
-        $.grep(this.words, function (item) {
-          return item.indexOf(keyword) === 0
-        })
-      )
-    },
-  },
-})
 
     var quill = new Quill('#snow', {
       theme: 'snow'

@@ -11,7 +11,7 @@
  Target Server Version : 110003 (11.0.3-MariaDB)
  File Encoding         : 65001
 
- Date: 31/01/2024 12:00:06
+ Date: 02/02/2024 07:56:25
 */
 
 SET NAMES utf8mb4;
@@ -24,17 +24,17 @@ DROP TABLE IF EXISTS `consultations`;
 CREATE TABLE `consultations`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `head` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
-  `item` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`item`)),
-  `other` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`other`)),
+  `konsultan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT '',
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of consultations
 -- ----------------------------
+INSERT INTO `consultations` VALUES (1, 1, '11,12', NULL, '2024-02-01 21:39:14', '2024-02-01 21:39:14');
 
 -- ----------------------------
 -- Table structure for districts
@@ -152,7 +152,11 @@ CREATE TABLE `heads`  (
   `parent` bigint(20) NULL DEFAULT NULL,
   `type` enum('menara','umum') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `status` int(11) NOT NULL,
+  `grant` int(11) NOT NULL DEFAULT 0,
   `step` int(11) NOT NULL,
+  `saran` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `header` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `verifikator` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `sekretariat` bigint(20) NULL DEFAULT NULL,
   `village` bigint(20) NULL DEFAULT NULL,
@@ -160,13 +164,18 @@ CREATE TABLE `heads`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of heads
 -- ----------------------------
-INSERT INTO `heads` VALUES (1, '600.1.15/0000/SPm-SIMBG/I/2024', NULL, 'umum', 5, 2, '5,8', 1, NULL, NULL, '2024-01-29 19:26:44', '2024-01-31 04:42:30');
-INSERT INTO `heads` VALUES (2, '600.1.15/0001/SPm-SIMBG/I/2024', NULL, 'menara', 5, 2, '9,7', 2, NULL, NULL, '2024-01-30 07:42:37', '2024-01-30 07:43:06');
+INSERT INTO `heads` VALUES (1, '600.1.15/0000/SPm-SIMBG/II/2024', NULL, 'umum', 1, 1, 2, NULL, NULL, '[\"12345\",\"lainnya\",\"Bersama\",\"085640431190\",\"Alamat Pemohon\",\"Sekolah\",\"Pendidikan\",\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\"]', '7,6', 2, 1, NULL, '2024-02-01 11:54:01', '2024-02-01 20:12:35');
+INSERT INTO `heads` VALUES (2, '600.1.15/0001/SPm-SIMBG/II/2024', NULL, 'menara', 1, 0, 2, NULL, NULL, '[\"12345\",\"lainnya\",\"Bersama\",\"085640431190\",\"Alamat Pemohon\",\"Sekolah\",\"Pendidikan\",\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\"]', '7,6', 2, 2, NULL, '2024-02-01 12:36:33', '2024-02-01 12:44:59');
+INSERT INTO `heads` VALUES (3, '600.1.15/0002/SPm-SIMBG/II/2024', NULL, 'umum', 1, 0, 1, 'joss', NULL, '[\"54321\",\"slf\",\"Bersama\",\"085640431190\",\"Alamat Pemohon\",\"Sekolah\",\"Pendidikan\",\"Lorem ipsum dolor sit amet\"]', '5', 2, 1, '2024-02-01 20:16:31', '2024-02-01 12:54:50', '2024-02-01 20:16:31');
+INSERT INTO `heads` VALUES (4, '600.1.15/0003/SPm-SIMBG/II/2024', NULL, 'menara', 1, 0, 1, 'yuhu', NULL, '[\"10012\",\"lainnya\",\"Indocal\",\"085640431190\",\"Alamat Pemohon\",\"Tower Radio\",\"Sinyal\",\"Alamat Bangunan\"]', '8', 2, 2, NULL, '2024-02-01 13:36:14', '2024-02-01 13:36:58');
+INSERT INTO `heads` VALUES (5, '600.1.15/0004/SPm-SIMBG/II/2024', NULL, 'umum', 5, 0, 1, NULL, NULL, '[\"553353\",\"lainnya\",\"gas\",\"085640431122\",\"Alamat Pemohon\",\"Sekolah\",\"Pendidikan\",\"Alamat Bangunan\"]', '8', 2, 1, NULL, '2024-02-01 13:53:35', '2024-02-01 13:53:35');
+INSERT INTO `heads` VALUES (6, '600.1.15/0005/SPm-SIMBG/II/2024', NULL, 'umum', 4, 0, 2, NULL, NULL, '[\"4325\",\"lainnya\",\"reju\",\"085640431120\",\"Alamat Pemohon\",\"Tower Radio\",\"Sinyal\",\"Lorem ipsum dolor sit amet\"]', '7,6', 2, 2, NULL, '2024-02-01 13:59:52', '2024-02-01 14:00:16');
+INSERT INTO `heads` VALUES (7, '600.1.15/0002/SPm-SIMBG/II/2024', 3, 'umum', 5, 0, 1, NULL, NULL, '[\"54321\",\"slf\",\"Bersama\",\"085640431190\",\"Alamat Pemohon\",\"Sekolah\",\"Pendidikan\",\"Lorem ipsum dolor sit amet\"]', '5', 2, 1, NULL, '2024-02-01 20:16:31', '2024-02-01 20:16:31');
 
 -- ----------------------------
 -- Table structure for items
@@ -180,7 +189,7 @@ CREATE TABLE `items`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of items
@@ -249,7 +258,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -277,6 +286,7 @@ INSERT INTO `migrations` VALUES (24, '2024_01_28_084235_create_heads_table', 5);
 INSERT INTO `migrations` VALUES (25, '2024_01_28_084806_create_verifications_table', 5);
 INSERT INTO `migrations` VALUES (26, '2024_01_28_085151_create_steps_table', 5);
 INSERT INTO `migrations` VALUES (27, '2024_01_28_085329_create_consultations_table', 6);
+INSERT INTO `migrations` VALUES (28, '2024_02_01_214111_create_schedules_table', 7);
 
 -- ----------------------------
 -- Table structure for pages
@@ -386,12 +396,34 @@ INSERT INTO `roles` VALUES (3, 'Kepala Dinas', 'KD', '10, 11', NULL, '2024-01-05
 INSERT INTO `roles` VALUES (5, 'Kepala Bidang', 'KB', '10, 11', NULL, '2024-01-16 06:13:52', '2024-01-16 06:13:52');
 INSERT INTO `roles` VALUES (6, 'Sub-Koordinator / Pengawas', 'SK', '10, 11', NULL, '2024-01-16 06:14:18', '2024-01-16 06:14:18');
 INSERT INTO `roles` VALUES (7, 'Admin Sekretariat', 'AS', '10, 11', NULL, '2024-01-16 06:14:35', '2024-01-16 06:14:35');
-INSERT INTO `roles` VALUES (8, 'Operator Sekretariat', 'OS', '10, 11', NULL, '2024-01-16 06:14:57', '2024-01-16 06:14:57');
+INSERT INTO `roles` VALUES (8, 'Operator Sekretariat', 'OS', '1, 2', NULL, '2024-01-16 06:14:57', '2024-02-01 20:46:56');
 INSERT INTO `roles` VALUES (9, 'Verifikator Level 1', 'VL1', '10, 11', NULL, '2024-01-16 06:15:23', '2024-01-29 18:29:14');
 INSERT INTO `roles` VALUES (10, 'Verifikator Level 2', 'VL2', '10, 11', NULL, '2024-01-16 06:16:46', '2024-01-29 18:27:53');
 INSERT INTO `roles` VALUES (11, 'Verifikator Level 3', 'VL3', '10, 11', NULL, '2024-01-16 06:18:04', '2024-01-29 18:27:58');
 INSERT INTO `roles` VALUES (12, 'Tim Penilai Teknis (TPT)', 'TPT', '10, 11', NULL, '2024-01-16 06:18:22', '2024-01-16 06:18:22');
 INSERT INTO `roles` VALUES (13, 'Tim Profesi Ahli (TPA)', 'TPA', '10, 11', NULL, '2024-01-16 06:19:05', '2024-01-16 06:19:05');
+
+-- ----------------------------
+-- Table structure for schedules
+-- ----------------------------
+DROP TABLE IF EXISTS `schedules`;
+CREATE TABLE `schedules`  (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `head` bigint(20) NULL DEFAULT NULL,
+  `tanggal` date NOT NULL,
+  `waktu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `jenis` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tempat` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `keterangan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of schedules
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for steps
@@ -400,17 +432,24 @@ DROP TABLE IF EXISTS `steps`;
 CREATE TABLE `steps`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `head` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+  `kode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `item` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-  `header` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `other` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of steps
 -- ----------------------------
+INSERT INTO `steps` VALUES (1, 1, 'VL3', '{\"dokumen_administrasi\":{\"item\":{\"1\":\"1\",\"2\":\"1\",\"7\":\"1\",\"8\":\"1\",\"9\":\"1\",\"10\":\"1\"},\"saranItem\":{\"1\":null,\"2\":null,\"7\":null,\"8\":null,\"9\":null,\"10\":null},\"sub\":[{\"title\":11,\"value\":{\"43\":\"1\",\"44\":\"1\"},\"saran\":{\"43\":null,\"44\":null}}]}}', NULL, '2024-02-01 12:20:27', '2024-02-01 12:20:27');
+INSERT INTO `steps` VALUES (2, 1, 'VL2', '{\"dokumen_teknis\":{\"sub\":[{\"title\":4,\"value\":{\"1\":\"1\",\"2\":\"1\",\"3\":\"1\",\"4\":\"1\",\"5\":\"1\",\"6\":\"1\",\"7\":\"1\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}},{\"title\":12,\"value\":{\"11\":\"1\",\"14\":\"1\",\"15\":\"1\",\"45\":\"1\",\"46\":\"1\",\"47\":\"1\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}},{\"title\":13,\"value\":{\"16\":\"1\",\"17\":\"1\",\"18\":\"1\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}}]}}', NULL, '2024-02-01 12:31:24', '2024-02-01 12:31:24');
+INSERT INTO `steps` VALUES (3, 2, 'VL2', '{\"dokumen_teknis\":{\"sub\":[{\"title\":36,\"value\":{\"40\":\"1\",\"41\":\"1\",\"42\":\"1\"},\"saran\":{\"40\":null,\"41\":null,\"42\":null}}]}}', NULL, '2024-02-01 12:37:13', '2024-02-01 12:37:13');
+INSERT INTO `steps` VALUES (4, 2, 'VL3', '{\"dokumen_administrasi\":{\"item\":{\"20\":\"1\",\"21\":\"1\",\"22\":\"1\",\"23\":\"1\",\"24\":\"1\",\"25\":\"1\",\"26\":\"1\",\"27\":\"1\",\"28\":\"1\",\"29\":\"1\",\"30\":\"1\",\"31\":\"1\",\"32\":\"1\",\"33\":\"1\",\"34\":\"1\"},\"saranItem\":{\"20\":null,\"21\":null,\"22\":null,\"23\":null,\"24\":null,\"25\":null,\"26\":null,\"27\":null,\"28\":null,\"29\":null,\"30\":null,\"31\":null,\"32\":null,\"33\":null,\"34\":null},\"sub\":[{\"title\":35,\"value\":{\"36\":\"1\",\"37\":\"1\",\"38\":\"1\",\"39\":\"1\"},\"saran\":{\"36\":null,\"37\":null,\"38\":null,\"39\":null}}]}}', NULL, '2024-02-01 12:44:59', '2024-02-01 12:44:59');
+INSERT INTO `steps` VALUES (6, 3, 'VL1', '{\"dokumen_pendukung_lainnya\":{\"item\":{\"5\":\"2\",\"6\":\"2\",\"14\":\"2\",\"15\":\"2\",\"16\":\"2\"},\"saranItem\":{\"5\":null,\"6\":null,\"14\":null,\"15\":null,\"16\":null},\"sub\":[{\"title\":17,\"value\":{\"19\":\"2\",\"20\":\"2\",\"21\":\"2\",\"22\":\"2\",\"23\":\"2\",\"24\":\"2\",\"25\":\"2\",\"26\":\"2\",\"27\":\"2\",\"28\":\"2\",\"29\":\"2\",\"30\":\"2\",\"31\":\"2\",\"32\":\"2\",\"33\":\"2\"},\"saran\":{\"19\":null,\"20\":null,\"21\":null,\"22\":null,\"23\":null,\"24\":null,\"25\":null,\"26\":null,\"27\":null,\"28\":null,\"29\":null,\"30\":null,\"31\":null,\"32\":null,\"33\":null}}]},\"dokumen_teknis\":{\"sub\":[{\"title\":4,\"value\":{\"1\":\"1\",\"2\":\"1\",\"3\":\"0\",\"4\":\"0\",\"5\":\"0\",\"6\":\"0\",\"7\":\"0\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}},{\"title\":12,\"value\":{\"11\":\"0\",\"14\":\"0\",\"15\":\"0\",\"45\":\"0\",\"46\":\"0\",\"47\":\"0\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}},{\"title\":13,\"value\":{\"16\":\"0\",\"17\":\"0\",\"18\":\"0\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}}]},\"dokumen_administrasi\":{\"item\":{\"1\":\"1\",\"2\":\"1\",\"7\":\"1\",\"8\":\"1\",\"9\":\"1\",\"10\":\"1\"},\"saranItem\":{\"1\":null,\"2\":null,\"7\":null,\"8\":null,\"9\":null,\"10\":null},\"sub\":[{\"title\":11,\"value\":{\"43\":\"1\",\"44\":\"1\"},\"saran\":{\"43\":null,\"44\":null}}]}}', NULL, '2024-02-01 12:57:57', '2024-02-01 13:11:32');
+INSERT INTO `steps` VALUES (7, 4, 'VL1', '{\"persyaratan_teknis\":{\"item\":{\"37\":\"1\",\"38\":\"1\"},\"saranItem\":{\"37\":null,\"38\":null},\"sub\":[{\"title\":36,\"value\":{\"40\":\"1\",\"41\":\"1\",\"42\":\"1\"},\"saran\":{\"40\":null,\"41\":null,\"42\":null}}]},\"dokumen_administrasi\":{\"item\":{\"20\":\"1\",\"21\":\"1\",\"22\":\"0\",\"23\":\"0\",\"24\":\"0\",\"25\":\"0\",\"26\":\"1\",\"27\":\"0\",\"28\":\"0\",\"29\":\"0\",\"30\":\"1\",\"31\":\"0\",\"32\":\"0\",\"33\":\"0\",\"34\":\"1\"},\"saranItem\":{\"20\":null,\"21\":null,\"22\":null,\"23\":null,\"24\":null,\"25\":null,\"26\":null,\"27\":null,\"28\":null,\"29\":null,\"30\":null,\"31\":null,\"32\":null,\"33\":null,\"34\":null},\"sub\":[{\"title\":35,\"value\":{\"36\":\"1\",\"37\":\"1\",\"38\":\"1\",\"39\":\"1\"},\"saran\":{\"36\":null,\"37\":null,\"38\":null,\"39\":null}}]}}', NULL, '2024-02-01 13:36:45', '2024-02-01 13:36:58');
+INSERT INTO `steps` VALUES (8, 6, 'VL2', '{\"dokumen_teknis\":{\"sub\":[{\"title\":4,\"value\":{\"1\":\"1\",\"2\":\"1\",\"3\":\"1\",\"4\":\"1\",\"5\":\"1\",\"6\":\"1\",\"7\":\"1\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}},{\"title\":12,\"value\":{\"11\":\"1\",\"14\":\"1\",\"15\":\"1\",\"45\":\"1\",\"46\":\"1\",\"47\":\"1\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}},{\"title\":13,\"value\":{\"16\":\"1\",\"17\":\"1\",\"18\":\"1\"},\"saran\":{\"1\":null,\"2\":null,\"3\":null,\"4\":null,\"5\":null,\"6\":null,\"7\":null,\"11\":null,\"14\":null,\"15\":null,\"45\":null,\"46\":null,\"47\":null,\"16\":null,\"17\":null,\"18\":null}}]}}', NULL, '2024-02-01 14:00:16', '2024-02-01 14:00:16');
 
 -- ----------------------------
 -- Table structure for subs
@@ -424,7 +463,7 @@ CREATE TABLE `subs`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of subs
@@ -510,7 +549,7 @@ CREATE TABLE `users`  (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `users_email_unique`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
@@ -524,6 +563,9 @@ INSERT INTO `users` VALUES (6, 'dua', 'verif@dua.com', 10, NULL, '$2y$10$N5ZSmNK
 INSERT INTO `users` VALUES (7, 'tiga', 'verif@tiga.com', 11, NULL, '$2y$10$buoQYBLIqPTuSrAgmLnB1uyQh0CXfPnkpkG37Tz/VTydM.YQbNmKG', NULL, '2024-01-29 18:32:13', '2024-01-29 18:42:29', NULL);
 INSERT INTO `users` VALUES (8, 'wahid', 'wahid@satu.com', 9, NULL, '$2y$10$pJ6Ev9WLwYXuWY4.9NBM8ezSeggjSYbIcOVMPjks4qGXoUAkDkrq2', NULL, '2024-01-29 18:46:35', '2024-01-29 18:46:35', NULL);
 INSERT INTO `users` VALUES (9, 'second', 'second@dua.com', 10, NULL, '$2y$10$0HaHo7WyBeWnXV2gmZ.Sx.yxg0VJX92OxvgLZxI02Y.n.KAl59wPG', NULL, '2024-01-29 19:05:36', '2024-01-29 19:05:36', NULL);
+INSERT INTO `users` VALUES (10, 'operator', 'operator@mail.com', 8, NULL, '$2y$10$XiTZu6FCxHZoEyjqz1z5DOIB0lEXF6WJWyqPdsx/qu500cvbdGgRy', NULL, '2024-02-01 20:47:59', '2024-02-01 20:47:59', NULL);
+INSERT INTO `users` VALUES (11, 'Darso', 'faisol.ajifa@gmail.com', 12, NULL, '$2y$10$yAj7jQd/a0Tq/NFn4sdeY.034NjlxxBe7QIMYumWXu56NaGuExHVG', NULL, '2024-02-01 20:55:29', '2024-02-01 21:21:01', NULL);
+INSERT INTO `users` VALUES (12, 'QQ', 'codeqlab@gmail.com', 13, NULL, '$2y$10$6n2fG9DAEQFElBAjWzIEIuP/bAKN11VflHv0dXORV2ddR3WuVbqte', NULL, '2024-02-01 20:55:52', '2024-02-01 21:21:28', NULL);
 
 -- ----------------------------
 -- Table structure for verifications

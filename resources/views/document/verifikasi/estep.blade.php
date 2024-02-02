@@ -9,7 +9,7 @@
                 @if(count($item->sub) > 0)   
                     <p> {{$no++}}. {{$item->name}}</p>
                     @foreach($item->sub as $sub)           
-                    <div class="row mb-3">
+                    <div class="row mb-3 g-0">
                         <div class="col-md-4 d-flex">
                             <div class="ms-3">
                                 {{abjad($loop->index)}}. 
@@ -23,15 +23,15 @@
                                     <label class="form-check-label">Ada</label>
                                 </div>
                                 <div class="form-check d-inline-block mx-3">
-                                    <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="0" {{old('sub['.$sub->id.'}]') == '0' ? 'checked' : null}}>
+                                    @if(old('sub['.$sub->id.']'))
+                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="0" {{old('sub['.$sub->id.']') == '0' ? 'checked' : null}}>
+                                    @else
+                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="0" checked>
+                                    @endif
                                     <label class="form-check-label">Tidak Ada</label>
                                 </div>   
                                 <div class="form-check d-inline-block">
-                                    @if(old())
-                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" {{old('sub['.$sub->id.']') == '2' ? 'checked' : null}}>
-                                    @else
-                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" checked>
-                                    @endif
+                                    <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" {{old('sub['.$sub->id.'}]') == '2' ? 'checked' : null}}>                           
                                     <label class="form-check-label">Tidak Perlu</label>
                                 </div>
                             </div>
@@ -53,15 +53,15 @@
                                     <label class="form-check-label">Ada</label>
                                 </div>
                                 <div class="form-check d-inline-block mx-3">
-                                    <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="0" {{old('item['.$item->id.']') == '0' ? 'checked' : null}}>
+                                    @if(old('item['.$item->id.']'))
+                                        <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="0" {{old('item['.$item->id.']') == '0' ? 'checked' : null}}>
+                                    @else
+                                        <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="0" checked>
+                                    @endif
                                     <label class="form-check-label">Tidak Ada</label>
                                 </div>   
-                                <div class="form-check d-inline-block">
-                                    @if(old())
-                                        <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" {{old('item['.$item->id.']') == '2' ? 'checked' : null}}>
-                                    @else
-                                        <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" checked>
-                                    @endif
+                                <div class="form-check d-inline-block">                             
+                                    <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" {{old('item['.$item->id.']') == '2' ? 'checked' : null}}>
                                     <label class="form-check-label">Tidak Perlu</label>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                 @if(count($item->sub) > 0)   
                     <p> {{$no++}}. {{$item->name}}</p>
                     @foreach($item->sub as $sub)           
-                    <div class="row mb-3">
+                    <div class="row mb-3 g-0">
                         <div class="col-md-4 d-flex">
                             <div class="ms-3">
                                 {{abjad($loop->index)}}. 
@@ -101,15 +101,15 @@
                                     <label class="form-check-label">Ada</label>
                                 </div>
                                 <div class="form-check d-inline-block mx-3">
-                                    <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="0" {{old('sub['.$sub->id.'}]') == '0' ? 'checked' : null}}>
+                                    @if(old('sub['.$sub->id.']'))
+                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="0" {{old('sub['.$sub->id.']') == '0' ? 'checked' : null}}>
+                                    @else
+                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="0" checked>
+                                    @endif
                                     <label class="form-check-label">Tidak Ada</label>
                                 </div>   
                                 <div class="form-check d-inline-block">
-                                    @if(old())
-                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" {{old('sub['.$sub->id.']') == '2' ? 'checked' : null}}>
-                                    @else
-                                        <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" checked>
-                                    @endif
+                                    <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" {{old('sub['.$sub->id.']') == '2' ? 'checked' : null}}>                       
                                     <label class="form-check-label">Tidak Perlu</label>
                                 </div>
                             </div>
@@ -120,7 +120,7 @@
                     </div>  
                     @endforeach                
                 @else
-                    <div class="row mb-3">
+                    <div class="row mb-3 g-0">
                         <div class="col-md-4 d-flex">
                             {{$no++}}. <p class="ms-2">{{$item->name}}</p>
                         </div>
@@ -131,15 +131,15 @@
                                     <label class="form-check-label">Ada</label>
                                 </div>
                                 <div class="form-check d-inline-block mx-3">
+                                    @if(old('item['.$item->id.']'))
                                     <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="0" {{old('item['.$item->id.']') == '0' ? 'checked' : null}}>
+                                    @else
+                                    <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="0" checked>
+                                    @endif
                                     <label class="form-check-label">Tidak Ada</label>
                                 </div>   
-                                <div class="form-check d-inline-block">
-                                    @if(old())
-                                        <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" {{old('item['.$item->id.']') == '2' ? 'checked' : null}}>
-                                    @else
-                                        <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" checked>
-                                    @endif
+                                <div class="form-check d-inline-block">                         
+                                    <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" {{old('item['.$item->id.']') == '2' ? 'checked' : null}}>
                                     <label class="form-check-label">Tidak Perlu</label>
                                 </div>
                             </div>
@@ -165,7 +165,7 @@
                     @if(count($item->sub) > 0)   
                         <p> {{$no++}}. {{$item->name}}</p>
                         @foreach($item->sub as $sub)           
-                        <div class="row mb-3">
+                        <div class="row mb-3 g-0">
                             <div class="col-md-4 d-flex">
                                 <div class="ms-3">
                                     {{abjad($loop->index)}}. 
@@ -183,7 +183,7 @@
                                         <label class="form-check-label">Tidak Ada</label>
                                     </div>   
                                     <div class="form-check d-inline-block">
-                                        @if(old())
+                                        @if(old('sub['.$sub->id.']'))
                                             <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" {{old('sub['.$sub->id.']') == '2' ? 'checked' : null}}>
                                         @else
                                             <input class="form-check-input" type="radio" name="sub[{{$sub->id}}]" value="2" checked>
@@ -198,7 +198,7 @@
                         </div>  
                         @endforeach                
                     @else
-                        <div class="row mb-3">
+                        <div class="row mb-3 g-0">
                             <div class="col-md-4 d-flex">
                                 {{$no++}}. <p class="ms-2">{{$item->name}}</p>
                             </div>
@@ -213,7 +213,7 @@
                                         <label class="form-check-label">Tidak Ada</label>
                                     </div>   
                                     <div class="form-check d-inline-block">
-                                        @if(old())
+                                        @if(old('item['.$item->id.']'))
                                             <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" {{old('item['.$item->id.']') == '2' ? 'checked' : null}}>
                                         @else
                                             <input class="form-check-input" type="radio" name="item[{{$item->id}}]" value="2" checked>
@@ -234,5 +234,7 @@
 @endif
 
 @if($head->status == 2)
-Saran
+    <label>Saran :</label>
+    <textarea name="content" id="editor" class="form-control"></textarea>
+</div>
 @endif

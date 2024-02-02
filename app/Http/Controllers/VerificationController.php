@@ -13,6 +13,9 @@ use App\Models\Role;
 use App\Models\District;
 use App\Models\Step;
 use Illuminate\Support\Arr;
+use PDF;
+use QrCode;
+use Exception;
 
 class VerificationController extends Controller
 {
@@ -26,8 +29,7 @@ class VerificationController extends Controller
     public function index()
     {
         
-        $da = Head::all();      
-        // $da = Head::where('status',5)->get();      
+        $da = Head::all();        
         $data = "Dokumen";
         return view('verifikator.index',compact('da','data'));
     }
@@ -45,90 +47,121 @@ class VerificationController extends Controller
 
     public function step($id)
     {
+
         $head = Head::where(DB::raw('md5(id)'),$id)->first(); 
-        $doc  = Formulir::where('name','umum')->first(); 
+    
+        if($head->status == 1)
+        {
+            toastr()->success('Document Complete', ['timeOut' => 5000]);
+            return redirect()->route('verification.index');
+        }
+        $doc  = Formulir::where('name',$head->type)->first(); 
         $dis  = District::all();
         $data = 'Verifikasi '.$head->type;
         
-        return view('document.umum',compact('head','doc','data','head','dis'));    
+        return view('document.verifikasi.index',compact('head','doc','data','head','dis'));    
+    }
+
+    public function modif($id)
+    {
+
+        $head = Head::where(DB::raw('md5(id)'),$id)->first(); 
+        $doc  = Formulir::where('name','umum')->first(); 
+        $dis  = District::all();
+        $data = 'Edit Verifikasi '.$head->type;
+        
+        return view('document.umum.edit',compact('head','doc','data','head','dis'));    
+    }
+
+    public function doc($id)
+    {
+        $head = Head::where(DB::raw('md5(id)'),$id)->first(); 
+        $docs  = Formulir::where('name',$head->type)->first(); 
+
+        // dd($doc);
+
+        $step = $head->step == 1 ? 0 : 1;
+        
+        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($head->nomor));
+        $data = compact('qrCode','docs','head','step');
+
+        if($head->step == 1)
+        {
+            $pdf = PDF::loadView('verifikator.doc.index', $data)->setPaper('a4', 'potrait');    
+            return $pdf->stream();
+            return view('verifikator.doc.index',$data);    
+        }
+        else
+        {
+            $pdf = PDF::loadView('verifikator.doc.home', $data)->setPaper('a4', 'potrait');    
+            return $pdf->stream();
+            return view('verifikator.doc.home',$data);    
+        }
     }
 
     public function next(Request $request, $id)
     {                    
         $head = Head::where(DB::raw('md5(id)'),$id)->first(); 
+        $step = Step::where(DB::raw('md5(head)'),$id)->first(); 
+        $level = Auth::user()->roles->kode;
         
         $mid = [3,4];
-        if($head->status == 5)
-        {
-            $rule = [                   
-                        'namaPemohon' => 'required',           
-                        'alamatPemohon'=> 'required',                                    
-                        'namaBangunan'=> 'required',                                    
-                        'alamatBangunan'=> 'required', 
-                        'pengajuan'=> 'required', 
-                        'fungsi'=> 'required', 
-                        'noreg'=> 'required', 
-                        'dis'=> 'required', 
-                        'des'=> 'required', 
-                        'hp'=> 'required',             
-                    ];
-    
-            $message = ['required'=>'Field ini harus diisi'];
-            $request->validate($rule,$message);
 
-            $header= [$request->noreg, $request->pengajuan, $request->namaPemohon, $request->hp, $request->alamatPemohon, $request->namaBangunan, $request->fungsi, $request->alamatBangunan];                
-          
+        if($head->status == 1)
+        {
+            toastr()->success('Document Complete', ['timeOut' => 5000]);
+            return redirect()->route('verification.index');
+        }
+        else if($head->status == 2)
+        {
+            $step->kode = $level;
+            $step->save();
+
+            $head->saran = $request->content;
+            $head->status = 1;
+            $head->save();
+
+            toastr()->success('Input Complete', ['timeOut' => 5000]);
+            return redirect()->route('verification.index');
+        }
+        else if($head->status == 5)
+        {           
+        
             if($request->item)
             {
                 $da['item'] = $request->item;
-            }
-    
-            if($request->saranItem)
-            {
                 $da['saranItem'] = $request->saranItem;
-            }
+            } 
     
             if($request->sub)
             {
-                $da['sub'] = $request->sub;
+                $sub = $request->sub;
+
+                foreach ($sub as $key => $value) {
+                    $subs[]= [
+                                'title'=>$key,
+                                'value'=>$value,
+                                'saran'=>$request->saranSub                
+                                ]; 
+                }                
+                $da['sub'] = $subs;  
             }
-    
-            if($request->saranSub)
-            {
-                $da['saranSub'] = $request->saranSub;
-            }
-    
-            if($request->other)
-            {
-                $da['other'] = $request->other;
-            }
-    
-            if($request->nameOther)
-            {
-                $da['nameOther'] = $request->nameOther;
-            }
-    
-            if($request->saranOther)
-            {
-                $da['saranOther'] = $request->saranOther;
-            }
-    
+
             $item['dokumen_administrasi'] = $da;
 
             $head->status = 4;
-            $head->village = $request->village;
             $head->save();  
 
-            $step = new Step;
+            if(!$step)
+            {
+                $step = new Step;
+            }
             $step->head = $head->id;
-            $step->header = json_encode($header);
             $step->item = json_encode($item);
             $step->save();
         }
-        elseif(in_array($head->status,$mid))
-        {
-
-            $step = Step::where(DB::raw('md5(head)'),$id)->first();   
+        else if(in_array($head->status,$mid))
+        { 
 
             if($request->item)
             {
@@ -142,43 +175,58 @@ class VerificationController extends Controller
     
             if($request->sub)
             {
-                $da['sub'] = $request->sub;
+                $sub = $request->sub;
+
+                foreach ($sub as $key => $value) {
+                    $subs[]= [
+                                'title'=>$key,
+                                'value'=>$value,
+                                'saran'=>$request->saranSub                
+                                ]; 
+                }                
+                $da['sub'] = $subs;  
             }
     
-            if($request->saranSub)
-            {
-                $da['saranSub'] = $request->saranSub;
-            }
+
+            // if($request->other)
+            // {
+            //     $da['other'] = $request->other;
+            // }
     
-            if($request->other)
-            {
-                $da['other'] = $request->other;
-            }
+            // if($request->nameOther)
+            // {
+            //     $da['nameOther'] = $request->nameOther;
+            // }
     
-            if($request->nameOther)
-            {
-                $da['nameOther'] = $request->nameOther;
-            }
-    
-            if($request->saranOther)
-            {
-                $da['saranOther'] = $request->saranOther;
-            }
+            // if($request->saranOther)
+            // {
+            //     $da['saranOther'] = $request->saranOther;
+            // }
     
 
             $old = (array) json_decode($step->item);
 
-            if($head->status == 4)
-            {     
-                $item = array_merge(['dokumen_teknis'=>$da], $old);   
+            
+            if($head->type == 'menara')
+            {
+                $item = array_merge(['persyaratan_teknis'=>$da], $old);  
+                $head->status =  2;
             }
+            else
+            {
+                if($head->status == 4)
+                {     
+                    $item = array_merge(['dokumen_teknis'=>$da], $old);   
+                }
+    
+                if($head->status == 3)
+                { 
+                    $item = array_merge(['dokumen_pendukung_lainnya'=>$da], $old);   
+                }
 
-            if($head->status == 3)
-            { 
-                $item = array_merge(['dokumen_pendukung_lainnya'=>$da], $old);   
+                $head->status =  $head->status-1;
             }
-
-            $head->status =  $head->status-1;
+            
             $head->save(); 
 
             $step->item = json_encode($item);
@@ -238,23 +286,12 @@ class VerificationController extends Controller
             // dd($data_history);
         }
 
-        if($head->status == 3)
+        elseif($head->status == 3)
         {
             $new = (array) json_decode($step->item);
-            Arr::forget($new, 'dokumen_teknis');
-            // $item = $old->dokumen_teknis->item;
-            // $saranItem = $old->dokumen_teknis->saranItem;
+            Arr::forget($new, 'dokumen_teknis');  
             $sub = $old->dokumen_teknis->sub;
             $saranSub = $old->dokumen_teknis->saranSub;
-
-            // foreach ($saranItem as $key => $value) {
-            //     $data_history['saranItem['.$key.']'] = $value;
-            // }   
-
-            // foreach ($item as $key => $value) {
-            //     $data_history['item['.$key.']'] = $value;
-            // }   
-
             foreach ($sub as $key => $value) {
                 $data_history['sub['.$key.']'] = $value;
             }   
@@ -271,12 +308,10 @@ class VerificationController extends Controller
             $head->save();
         }
 
-        if($head->status == 4)
+        elseif($head->status == 4)
         {  
             $item = $old->dokumen_administrasi->item;
             $saranItem = $old->dokumen_administrasi->saranItem;
-            $sub = $old->dokumen_administrasi->sub;
-            $saranSub = $old->dokumen_administrasi->saranSub;
 
             foreach ($saranItem as $key => $value) {
                 $data_history['saranItem['.$key.']'] = $value;
@@ -286,13 +321,22 @@ class VerificationController extends Controller
                 $data_history['item['.$key.']'] = $value;
             }   
 
-            foreach ($sub as $key => $value) {
-                $data_history['sub['.$key.']'] = $value;
-            }   
+            if(isset($old->dokumen_administrasi->sub))
+            {
+                $sub = $old->dokumen_administrasi->sub;
+                foreach ($sub as $key => $value) {
+                    $data_history['sub['.$key.']'] = $value;
+                }   
+            }
+            
+            if(isset($old->dokumen_administrasi->saranSub))
+            {
+                $saranSub = $old->dokumen_administrasi->saranSub;
+                foreach ($saranSub as $key => $value) {
+                    $data_history['saranSub['.$key.']'] = $value;
+                }   
+            }
 
-            foreach ($saranSub as $key => $value) {
-                $data_history['saranSub['.$key.']'] = $value;
-            }   
 
             $step->delete();
 
@@ -301,30 +345,110 @@ class VerificationController extends Controller
             $head->save();
         }
 
-        if($head->status == 5)
-        {
-            $data_history = [
-                'name'=>$head->name,
-                'jenis'=>$head->jenis,      
-            ];
-        }
-
-
-        // $head->status = 5;
-        // $head->save();
-
-        // $head->delete();
-
         return back()->withInput($data_history);   
         // return redirect()->route('verifikasi.create')->withInput($data_history);   
     }
 
-    public function village(Request $request)
-    {
-        $da = Village::where('districts_id',$request->id)->pluck('name', 'id');
-        return response()->json($da);
-    }
+    public function nexts(Request $request, $id)
+    {                    
+        $head  = Head::where(DB::raw('md5(id)'),$id)->first();    
+        $step  = Step::where(DB::raw('md5(head)'),$id)->first(); 
+        $level = Auth::user()->roles->kode;
+        
+        // if(!$step)
+        // {
+        // }
+        
+        $step = new Step;
 
+        if($level == 'VL3')
+        {      
+            if($request->item)
+            {
+                $da['item'] = $request->item;
+                $da['saranItem'] = $request->saranItem;
+            } 
+    
+            if($request->sub)
+            {
+                $sub = $request->sub;
+
+                foreach ($sub as $key => $value) {
+                    $subs[]= [
+                                'title'=>$key,
+                                'value'=>$value,
+                                'saran'=>$request->saranSub                
+                                ]; 
+                }                
+                $da['sub'] = $subs;  
+            }
+
+            $item['dokumen_administrasi'] = $da;
+
+            $step->head = $head->id;
+            $step->item = json_encode($item);
+            $step->kode = $level;
+            $step->save();
+
+            if($head->status == 5)
+            {                
+                $head->status = $head->status - 1;
+            }
+            else
+            {
+                $head->status = 1;
+            }
+
+            $head->save();
+
+            toastr()->success('Input Complete', ['timeOut' => 5000]);
+            return redirect()->route('verification.index');
+        }
+        elseif($level == 'VL2')
+        {
+
+            if($request->sub)
+            {
+                $sub = $request->sub;
+
+                foreach ($sub as $key => $value) {
+                    $subs[]= [
+                                'title'=>$key,
+                                'value'=>$value,
+                                'saran'=>$request->saranSub                
+                                ]; 
+                }                
+                $da['sub'] = $subs;  
+            }
+
+            $item = ['dokumen_teknis'=>$da];
+
+            $step->head = $head->id;
+            $step->kode = $level;
+            $step->item = json_encode($item);
+            $step->save();
+
+            if($head->status == 5)
+            {                
+                $head->status = $head->status - 1;
+            }
+            else
+            {
+                $head->status = 1;
+            }
+
+            $head->save();
+
+            toastr()->success('Input Complete', ['timeOut' => 5000]);
+            return redirect()->route('verification.index');
+        }
+        else 
+        {
+            toastr()->error('Input Gagal, Next', ['timeOut' => 5000]);
+            return back();
+        }
+             
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -337,8 +461,7 @@ class VerificationController extends Controller
      * Display the specified resource.
      */
     public function show(Verification $verification)
-    {
-        dd($verification);
+    { 
     }
 
     /**

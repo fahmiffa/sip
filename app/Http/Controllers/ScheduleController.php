@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invitation;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
-class InvitationController extends Controller
+class ScheduleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('IsPermission:master_surat');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $da = Schedule::all();
+        $data = "Jadwal";
+        return view('konsultasi.index',compact('da','data'));
     }
 
     /**
@@ -34,7 +40,7 @@ class InvitationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Invitation $invitation)
+    public function show(Schedule $schedule)
     {
         //
     }
@@ -42,7 +48,7 @@ class InvitationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Invitation $invitation)
+    public function edit(Schedule $schedule)
     {
         //
     }
@@ -50,7 +56,7 @@ class InvitationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Invitation $invitation)
+    public function update(Request $request, Schedule $schedule)
     {
         //
     }
@@ -58,7 +64,7 @@ class InvitationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invitation $invitation)
+    public function destroy(Schedule $schedule)
     {
         //
     }

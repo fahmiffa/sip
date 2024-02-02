@@ -27,12 +27,13 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::group(['prefix'=>'verifikator'],function() {        
         Route::resource('verification', App\Http\Controllers\VerificationController::class);  
+        Route::get('doc-verifikasi/{id}', [App\Http\Controllers\VerificationController::class, 'doc'])->name('doc.verifikator');  
         Route::get('verifikasi-step/{id}', [App\Http\Controllers\VerificationController::class, 'step'])->name('step.verifikasi');  
+        Route::get('edit-step/{id}', [App\Http\Controllers\VerificationController::class, 'modif'])->name('edit.verifikasi');  
         Route::post('next-step/{id}', [App\Http\Controllers\VerificationController::class, 'next'])->name('next.verifikasi');    
-        Route::post('back-step/{id}', [App\Http\Controllers\VerificationController::class, 'back'])->name('back.verifikasi');  
-        Route::post('village}', [App\Http\Controllers\VerificationController::class, 'village'])->name('village');        
+        Route::post('back-step/{id}', [App\Http\Controllers\VerificationController::class, 'back'])->name('back.verifikasi'); 
+        Route::post('next-tahap/{id}', [App\Http\Controllers\VerificationController::class, 'nexts'])->name('nexts.verifikasi');                         
     });   
-    });
 
     Route::group(['prefix'=>'master'],function() {   
         Route::group(['prefix'=>'account'],function() {   
@@ -59,10 +60,19 @@ Route::group(['middleware' => 'auth'], function() {
         //     Route::post('step-destroy/{id}', [App\Http\Controllers\DocumentController::class, 'stepd'])->name('step.destroy');    
         // });
     });
-
+    
     Route::group(['prefix'=>'dokumen'],function() {   
-        Route::resource('verifikasi', App\Http\Controllers\HeadController::class);     
+        Route::resource('consultation', App\Http\Controllers\ConsultationController::class);  
+        Route::resource('schedule', App\Http\Controllers\ScheduleController::class);  
+        Route::resource('verifikasi', App\Http\Controllers\HeadController::class);  
+        Route::post('village}', [App\Http\Controllers\HeadController::class, 'village'])->name('village');    
+        Route::get('doc-verifikasi/{id}', [App\Http\Controllers\HeadController::class, 'doc'])->name('doc.verifikasi');  
+        Route::post('doc-apporove/{id}', [App\Http\Controllers\HeadController::class, 'approve'])->name('doc.approve');  
+        Route::post('doc-reject/{id}', [App\Http\Controllers\HeadController::class, 'reject'])->name('doc.reject');    
+    });
+    
 });
+
 
 
 

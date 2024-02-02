@@ -101,8 +101,8 @@ class FormulirController extends Controller
             $data = compact('form','qrCode');
 
             $pdf = PDF::loadView('doc.formulir.index', $data)->setPaper('a4', 'potrait');    
-            return $pdf->stream();
-            return view('formulir.index',$data);
+            // return $pdf->stream();
+            return view('doc.formulir.index',$data);
 
             
         } catch (Exception $e) {

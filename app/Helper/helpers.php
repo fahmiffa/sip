@@ -1,8 +1,10 @@
 <?php 
-use App\Models\Value;
 use Intervention\Image\Facades\Image as Image;
 use Carbon\Carbon;
 use App\Models\Head;
+use App\Models\Title;
+use App\Models\Item;
+use App\Models\Sub;
 
 function headers($id,$index,$val)
 { 
@@ -19,6 +21,19 @@ function headers($id,$index,$val)
     }
 }
 
+function named($val,$par)
+{
+    if($par == 'item')
+    {
+        return Item::where('id',$val)->first()->name;
+    }
+
+    if($par == 'sub')
+    {
+        return Sub::where('id',$val)->first()->name;
+    }
+}
+
 function items($id,$index,$val)
 {
     $da = Formulir::findOrFail($id);
@@ -30,6 +45,57 @@ function items($id,$index,$val)
     else
     {
         return 'None';
+    }
+}
+
+function doc($val, $type)
+{
+    if($type == 'umum')
+    {
+        if($val == 5)
+        {
+            return 'Dokumen Administrasi';
+        }
+        else if($val == 4)
+        {
+            return 'Dokumen Teknis';
+        }
+        else if($val == 3)
+        {
+            return 'Dokumen Pendukung Lainnya (Untuk SLF)';
+        }
+    }
+    else
+    {
+        if($val == 5)
+        {
+            return 'Dokumen Administrasi';
+        }
+        else if($val == 4)
+        {
+            return 'Persyaratan Teknis';
+        }
+    }
+}
+
+
+function status($val)
+{
+    if($val == '0')
+    {
+        return 'Tidak Ada';
+    }
+    else if($val == '1')
+    {
+        return 'Ada';
+    }
+    else if($val == '2')
+    {
+        return 'TIdak Perlu';
+    }
+    else
+    {
+        return 'Unknown';
     }
 }
 

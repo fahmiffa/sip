@@ -28,21 +28,24 @@
                         @csrf
                         
                             @if($head->status == 5)
-                                @include('document.header');
+                                @include('document.header')
                             @endif
 
-                            @include('document.step');
+                            @include('document.umum.estep')
             
                             <div class="col-md-12">
                                 <div class="col-md-12">
                                     <div class="d-flex justify-content-between">
                                         <button class="btn btn-primary rounded-pill">Save</button>     
-                                        <button type="button" onclick="prev()" class="btn btn-danger rounded-pill float-end">Back</button>                                                    
+                                        @if($head->status != 5)
+                                            <button type="button" onclick="prev()" class="btn btn-danger rounded-pill float-end">Back</button>                                                    
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </form>  
 
+                        
                         <form action="{{ route('back.verifikasi', ['id' => md5($head->id)]) }}" id="back" method="post">
                             @csrf
                         </form>

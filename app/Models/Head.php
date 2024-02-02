@@ -36,7 +36,35 @@ class Head extends Model
        }
     }
 
-    public function getroleAttribute()
+    public function gettahapAttribute()
+    {                
+
+       if($this->step == 2)
+       {  
+            $val = explode(",",$this->verifikator);
+            
+           foreach($val as $item)
+            {
+                if(Auth::user()->id == $item)
+                {
+                    $user = User::where('id',$item)->first();
+                    if($user)
+                    {
+                        $name = $user->roles->kode;
+                        break;
+                    }
+                }
+            }
+           
+            return $name;
+       } 
+       else
+       {
+            return null;
+       }
+    }
+
+    public function gettaskAttribute()
     {                
 
        if($this->verifikator)
@@ -57,5 +85,22 @@ class Head extends Model
        {
             return false;
        }
+    }
+
+    public function region()
+    {
+        return $this->belongsTo(Village::class, 'village', 'id');
+    }
+
+    public function steps()
+    {
+        // return $this->belongsTo(Step::class, 'id', 'head');
+        return $this->HasMany(Step::class, 'head', 'id');
+    }
+
+    public function kons()
+    {
+        // return $this->belongsTo(Step::class, 'id', 'head');
+        return $this->HasOne(Consultation::class, 'head', 'id');
     }
 }
