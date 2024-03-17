@@ -16,6 +16,7 @@ use Illuminate\Support\Arr;
 use PDF;
 use QrCode;
 use Exception;
+use App\Models\Verifikator;
 
 class VerificationController extends Controller
 {
@@ -26,13 +27,19 @@ class VerificationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        
-        $da = Head::all();        
+    public function index(Request $request)
+    {          
+        $val = Head::latest();    
+        $key = $request->get('key');
+        $opsi = $request->get('opsi');
+        if($key)
+        {
+            $val = $val->where($opsi,$key);
+        }        
+        $da = $val->paginate(10);    
         $data = "Dokumen";
         return view('verifikator.index',compact('da','data'));
-    }
+    }  
 
     /**
      * Show the form for creating a new resource.
@@ -49,17 +56,29 @@ class VerificationController extends Controller
     {
 
         $head = Head::where(DB::raw('md5(id)'),$id)->first(); 
+        $vl3  = Step::where(DB::raw('md5(head)'),$id)->where('kode','VL3')->first(); 
+        $vl2  = Step::where(DB::raw('md5(head)'),$id)->where('kode','VL2')->first(); 
+
+        $kode = Auth::user()->roles->kode;
+        $step  = Step::where(DB::raw('md5(head)'),$id)->where('kode',$kode)->where('status',1)->first(); 
     
         if($head->status == 1)
         {
-            toastr()->success('Document Complete', ['timeOut' => 5000]);
+            toastr()->success('Document on Step', ['timeOut' => 5000]);
             return redirect()->route('verification.index');
         }
+
+        if($step)
+        {
+            toastr()->success('Document on Step', ['timeOut' => 5000]);
+            return redirect()->route('verification.index');
+        }
+
         $doc  = Formulir::where('name',$head->type)->first(); 
         $dis  = District::all();
         $data = 'Verifikasi '.$head->type;
         
-        return view('document.verifikasi.index',compact('head','doc','data','head','dis'));    
+        return view('document.verifikasi.index',compact('head','doc','data','head','dis','vl2','vl3'));    
     }
 
     public function modif($id)
@@ -77,8 +96,6 @@ class VerificationController extends Controller
     {
         $head = Head::where(DB::raw('md5(id)'),$id)->first(); 
         $docs  = Formulir::where('name',$head->type)->first(); 
-
-        // dd($doc);
 
         $step = $head->step == 1 ? 0 : 1;
         
@@ -354,15 +371,14 @@ class VerificationController extends Controller
         $head  = Head::where(DB::raw('md5(id)'),$id)->first();    
         $step  = Step::where(DB::raw('md5(head)'),$id)->first(); 
         $level = Auth::user()->roles->kode;
+        $vl3   = Step::where(DB::raw('md5(head)'),$id)->where('kode','VL3')->first(); 
+        $vl2   = Step::where(DB::raw('md5(head)'),$id)->where('kode','VL2')->first();       
         
-        // if(!$step)
-        // {
-        // }
-        
-        $step = new Step;
-
         if($level == 'VL3')
         {      
+
+            $step = ($vl3) ? $vl3 : new Step;
+            
             if($request->item)
             {
                 $da['item'] = $request->item;
@@ -390,22 +406,31 @@ class VerificationController extends Controller
             $step->kode = $level;
             $step->save();
 
-            if($head->status == 5)
-            {                
-                $head->status = $head->status - 1;
-            }
-            else
+            if($vl2 && $vl2->status == 1)
+            // if($vl2)
             {
                 $head->status = 1;
             }
-
+            else
+            {
+                $head->status = $head->status - 1;                
+            }
             $head->save();
 
             toastr()->success('Input Complete', ['timeOut' => 5000]);
-            return redirect()->route('verification.index');
+            return redirect()->route('verification.index');           
         }
         elseif($level == 'VL2')
         {
+            if($request->item)
+            {
+                $da['item'] = $request->item;
+            }
+    
+            if($request->saranItem)
+            {
+                $da['saranItem'] = $request->saranItem;
+            }
 
             if($request->sub)
             {
@@ -421,26 +446,76 @@ class VerificationController extends Controller
                 $da['sub'] = $subs;  
             }
 
-            $item = ['dokumen_teknis'=>$da];
-
-            $step->head = $head->id;
-            $step->kode = $level;
-            $step->item = json_encode($item);
-            $step->save();
-
-            if($head->status == 5)
+            if($vl2)
             {                
-                $head->status = $head->status - 1;
+                $old = (array) json_decode($vl2->item);
+
+                if($vl2->status == 3)
+                {
+                    $item = array_merge(['dokumen_pendukung_lainnya'=>$da], $old);  
+                    $vl2->item = json_encode($item);
+                    $vl2->status = $vl2->status - 1;
+                    $vl2->save();
+
+                    toastr()->success('Input Complete, next input', ['timeOut' => 5000]);
+                    return back();   
+                }
+
+                if($vl2->status == 2)
+                {
+
+                    if($request->nameOther)
+                    {
+                        $other = $request->nameOther;
+        
+                        foreach ($other as $key => $value) {
+                            $others[]= [
+                                        'name'=>$value,
+                                        'value'=>$request->item[$key],
+                                        'saran'=>$request->saranOther[$key]                
+                                        ]; 
+                        }            
+                        
+                        $vl2->other = json_encode($others);
+                    }
+    
+                    $head->saran = $request->content;   
+                    
+                    if($vl3)
+                    {
+                        $head->status = 1;
+                    }
+                    
+                    $head->save();  
+
+                    $vl2->status = $vl2->status - 1;
+                    $vl2->save();
+
+                    toastr()->success('Input Complete', ['timeOut' => 5000]);
+                    return redirect()->route('verification.index');  
+                }
+           
             }
             else
-            {
-                $head->status = 1;
-            }
+            {   
+                
+                $step = new Step;
 
-            $head->save();
+                $item = ['dokumen_teknis'=>$da];
+                $step->item = json_encode($item);
+                $step->status = ($head->type == 'umum') ? 3 : 2;
 
-            toastr()->success('Input Complete', ['timeOut' => 5000]);
-            return redirect()->route('verification.index');
+                $step->head = $head->id;
+                $step->kode = $level;
+                $step->save();
+    
+                $head->status = $head->status - 1; 
+                $head->save();  
+
+                toastr()->success('Input Complete, next input', ['timeOut' => 5000]);
+                return back();   
+            }     
+                            
         }
         else 
         {

@@ -67,4 +67,16 @@
 <script src="{{asset('assets/extensions/choices.js/public/assets/scripts/choices.js')}}"></script>
 <script src="{{asset('assets/static/js/pages/form-element-select.js')}}"></script>
 
+<script src="{{asset('assets/extensions/quill/quill.min.js')}}"></script>
+<script>
+
+    var quill = new Quill('#snow', {
+      theme: 'snow'
+    });
+
+    quill.on('text-change', function(delta, oldDelta, source) {
+    document.querySelector("input[name='content']").value = quill.root.innerHTML;
+  });
+</script>
+
 @endpush

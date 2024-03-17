@@ -22,7 +22,8 @@ class ConsultationController extends Controller
      */
     public function index()
     {
-        $da = Consultation::all();
+        $val = Consultation::latest();
+        $da = $val->paginate(10);
         $data = "Konsultasi";
         return view('konsultasi.index',compact('da','data'));
     }
@@ -33,7 +34,7 @@ class ConsultationController extends Controller
     public function create()
     {
         $data = "Tambah Konsultasi";
-        $doc  = head::where('grant',1)->latest()->get();
+        $doc  = head::doesnthave('kons')->where('grant',1)->latest()->get();
         $user = Role::whereIn('kode',['TPT', 'TPA'])->get();       
         return view('konsultasi.create',compact('data','user','doc'));
     }
@@ -44,20 +45,32 @@ class ConsultationController extends Controller
     public function store(Request $request)
     {
         $rule = [                   
-            'doc' => 'required',           
+            'doc' => 'required',       
+            'notulen'=>'required',
             'konsultan'=> 'required',                                           
             ];
         $message = ['required'=>'Field ini harus diisi'];
         $request->validate($rule,$message);
 
-        if(count($request->konsultan) > 2)
+        if(count($request->notulen) > 2)
         {
-            toastr()->error('konsultan maksimal 2', ['timeOut' => 5000]);
+            toastr()->error('Notulen maksimal 2', ['timeOut' => 5000]);
             return back();
         }
 
         $kons = new Consultation;
         $kons->head = $request->doc;
+        $kons->notulen = implode(",",$request->notulen);         
+        $pile = $request->file('pile'); 
+        if($pile)
+        {
+            $ext = $pile->getClientOriginalExtension();
+            $path = $pile->storeAs(
+                'assets/konsultasi/'.time().'_konsultasi.'.$ext, ['disk' => 'public']
+            );    
+            $kons->files = $path;
+        }        
+
         $kons->konsultan = implode(",",$request->konsultan);              
         $kons->save();
 

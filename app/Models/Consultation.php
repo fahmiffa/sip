@@ -34,9 +34,37 @@ class Consultation extends Model
             return null;
        }
     }
+    public function getnotulensAttribute()
+    {                
 
-    public function heads()
+       if($this->notulen)
+       {  
+            $val = explode(",",$this->notulen);
+            
+           foreach($val as $item)
+            {
+                $user = User::where('id',$item)->first();
+                if($user)
+                {
+                    $name []= $user->name;
+                }
+            }
+           
+            return $name;
+       } 
+       else
+       {
+            return null;
+       }
+    }
+
+    public function doc()
     {
         return $this->belongsTo(Head::class, 'head', 'id');   
+    }
+
+    public function not()
+    {
+        return $this->HasOne(User::class, 'id', 'notulen');   
     }
 }

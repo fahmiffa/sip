@@ -71,10 +71,11 @@ function doc($val, $type)
         {
             return 'Dokumen Administrasi';
         }
-        else if($val == 4)
+        if($val == 4)
         {
             return 'Persyaratan Teknis';
         }
+
     }
 }
 
@@ -159,4 +160,10 @@ function dateID($par)
     $date->setLocale('id');
     $indonesianDate = $date->isoFormat('LL'); 
     return $indonesianDate;
+}
+
+function Hari($tanggal) {
+    $date = Carbon::parse($tanggal)->locale('id');
+    $date->settings(['formatFunction' => 'translatedFormat']);    
+    return $date->format('l, j F Y'); 
 }

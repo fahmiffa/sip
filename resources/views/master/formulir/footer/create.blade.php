@@ -48,6 +48,13 @@
                         <div class="form-group row mb-3">
                             <div class="col-md-12">
                                <textarea name="content" id="editor" class="form-control">{!! isset($footer) ? $footer->item : null !!}</textarea>
+
+                               <div id="snow">
+                                <p>Hello World!</p>
+                                <p>Some initial <strong>bold</strong> text</p>
+                                <p><br></p>
+            
+                            </div>
                             </div>
                         </div>
               

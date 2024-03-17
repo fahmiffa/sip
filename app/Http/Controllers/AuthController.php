@@ -10,10 +10,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Exception;
 use DB;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthController extends Controller
 {
-
 
     public function __construct()
     {
@@ -32,10 +32,33 @@ class AuthController extends Controller
         return view('login',compact('data'));
     } 
 
-    public function forget()
+    public function forgot()
+    {
+        $data = 'Halaman Lupa Password';            
+        return view('forgot',compact('data'));
+    }
+
+    public function forget(Request $request)
     {             
-        $data = 'Forgot Password';            
-        return view('forgets',compact('data'));
+        $rule = [                        
+            'email'=>'required|exists:users,email',                       
+            // 'password' => 'required|regex:/^(?=.*[a-zA-Z])(?=.*\d).+$/',         
+            'captcha' => ['required','captcha'],   
+            ];
+
+        $messages   =   [                      
+            'email.required'     =>  'Email harus di isi',                                                                                 
+            'email.exists'       =>  'Email Tidak ada',   
+            'captcha.required' => 'captcha required',
+            'captcha.captcha' => 'captcha invalid',         
+            // 'password.required'  =>  'Password harus di isi',         
+            // 'password.regex'     =>  'Password harus kombinasi Huruf dan Angka'                                                                          
+        ];
+
+        $request->validate($rule,$messages);
+
+        toastr()->success('Cek email untuk reset passwrod', ['timeOut' => 5000]);
+        return back();        
     } 
     
     public function pforget(Request $request)
@@ -168,59 +191,6 @@ class AuthController extends Controller
         
     }
 
-    public function reg()
-    {
-        
-        $data = 'Register';                
-        return view('reg',compact('data'));
-    }  
-
-    public function register(Request $request)
-    {
-        $messages   =   [
-            'username.required'       =>  'Username wajib diisikan',
-            'password.required'       =>  'Pasword wajib diisikan',
-            'email.required'       =>  'Email wajib diisikan',
-            'email.unique'       =>  'Email sudah ada',
-            'hp.required'       =>  'No Hp wajib diisikan',
-            'hp.unique'       =>  'No Hp sudah ada',
-            'hp.digits_between' => 'No HP minimal 12 dan maksimal 13 digit'
-        ];
-
-
-        $validasi = Validator::make(
-            $request->all(),
-            [       
-                'email' => 'required|unique:users,email',
-                'username' => 'required',
-                'password' => 'required',
-                'hp' => 'required|digits_between:12,13',
-                // 'hp' => 'required|digits_between:12,13|unique:users,hp',
-            ],
-            $messages
-        );
-        if ($validasi->fails()) {
-            
-            return back()->withErrors($validasi)->withInput();
-        } else {
-
-            
-            User::create([
-                'email'=>$request->email,
-                'hp'=>$request->hp,
-                'name'=>$request->username,
-                'password'=>bcrypt($request->password),
-                'level'=>'user'
-            ]);
-
-            SendEmail($request->email,config('notif.reg'));
-            SendWa($request->hp,config('notif.reg.body'));
-
-            Alert::success('Info', 'Registration successful, please login');
-            return redirect()->route('login');
-        }        
-    
-    }
 
     public function logout(Request $request)
     {
@@ -249,7 +219,8 @@ class AuthController extends Controller
                 $request->all(),
                 [       
                     'email' => 'required',
-                    'password' => 'required',                       
+                    'password' => 'required',     
+                    'captcha' => ['required','captcha'],                  
                 ],
                 $messages
             );

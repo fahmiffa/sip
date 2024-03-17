@@ -1,0 +1,4 @@
+[23-Feb-2024 04:39:36 UTC] PHP Fatal error:  Cannot redeclare App\Models\Notulen::doc() in /home/eskm8456/public_html/sip/app/Models/Notulen.php on line 19
+[24-Feb-2024 01:50:33 Asia/Jakarta] PHP Parse error:  syntax error, unexpected token "return" in /home/eskm8456/public_html/sip/app/Helper/helpers.php on line 26
+[24-Feb-2024 01:50:34 Asia/Jakarta] PHP Parse error:  syntax error, unexpected token "return" in /home/eskm8456/public_html/sip/app/Helper/helpers.php on line 26
+[24-Feb-2024 01:50:40 Asia/Jakarta] PHP Parse error:  syntax error, unexpected token "return" in /home/eskm8456/public_html/sip/app/Helper/helpers.php on line 26

@@ -41,11 +41,19 @@ class UserController extends Controller
     {
         $rule = [            
             'name' => 'required|unique:users,name',     
-            'password'=>'required',
+            'password' => 'required|regex:/^(?=.*[a-zA-Z])(?=.*\d).+$/',   
             'email'=>'required|unique:users,email'                        
             ];
 
-        $request->validate($rule);
+        $messages   =   [
+            'name.required'      =>  'Nama harus di isi',                        
+            'email.required'     =>  'Email harus di isi',                                                                                 
+            'email.unique'       =>  'Email sudah ada',         
+            'password.required'  =>  'Password harus di isi',         
+            'password.regex'     =>  'Password harus kombinasi Huruf dan Angka'                                                                          
+        ];
+
+        $request->validate($rule,$messages);
  
         $item = new User;        
         $item->name = $request->name;

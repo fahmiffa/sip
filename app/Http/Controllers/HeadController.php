@@ -9,6 +9,7 @@ use DB;
 use App\Models\Formulir;
 use App\Models\Village;
 use App\Models\Role;
+use App\Models\User;
 use App\Models\District;
 use PDF;
 use QrCode;
@@ -24,9 +25,17 @@ class HeadController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)    
     {
-        $da = verifikasi::withTrashed()->latest()->get();
+        $val = verifikasi::latest();
+        // dd($val->get());
+        $key = $request->get('key');
+        $opsi = $request->get('opsi');
+        if($key)
+        {
+            $val = $val->where($opsi,$key);
+        }        
+        $da = $val->paginate(10);
         $data = "Verifikasi";
         return view('document.index',compact('da','data'));
     }
@@ -44,11 +53,10 @@ class HeadController extends Controller
 
     public function doc($id)
     {
-        $head = Verifikasi::where(DB::raw('md5(id)'),$id)->first(); 
+        $head = Verifikasi::where(DB::raw('md5(id)'),$id)->withTrashed()->first(); 
+
         $docs  = Formulir::where('name',$head->type)->first(); 
-
-        // dd($doc);
-
+        
         $step = $head->step == 1 ? 0 : 1;
         
         $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($head->nomor));
@@ -90,6 +98,7 @@ class HeadController extends Controller
         $head->header = $old->header;
         $head->nomor = $old->nomor;
         $head->type = $old->type;
+        $head->reg = $old->reg;
         $head->status = 5;
         $head->verifikator = $old->verifikator;
         $head->step = $old->step;
@@ -107,8 +116,7 @@ class HeadController extends Controller
      */
     public function store(Request $request)
     {
-        $rule = [                   
-            'name' => 'required',           
+        $rule = [                               
             'type'=> 'required',
             'verifikator'=>'required',
             'namaPemohon' => 'required',           
@@ -117,28 +125,64 @@ class HeadController extends Controller
             'alamatBangunan'=> 'required', 
             'pengajuan'=> 'required', 
             'fungsi'=> 'required', 
-            'noreg'=> 'required', 
+            'noreg'=> 'required|unique:heads,reg', 
+            'email'=> 'required|unique:heads,reg', 
             'dis'=> 'required', 
             'des'=> 'required', 
             'hp'=> 'required',                                           
             ];
-        $message = ['required'=>'Field ini harus diisi'];
+        $message = ['required'=>'Field ini harus diisi','unique'=>'Field ini sudah ada'];
         $request->validate($rule,$message);
 
         // validasi tahap
         if(count($request->verifikator) > 2)
         {
             toastr()->error('Verifikator maksimal 2', ['timeOut' => 5000]);
-            return back();
+            return back()->withInput();
         }
 
-        $header= [$request->noreg, $request->pengajuan, $request->namaPemohon, $request->hp, $request->alamatPemohon, $request->namaBangunan, $request->fungsi, $request->alamatBangunan];                
+        $ver = $request->verifikator;
+
+        // validasi 2 tahap
+        if(count($ver) > 1)
+        {
+            // case 1
+            $VL2 = User::where('id',$ver[0])->where('role',Role::select('id')->where('kode','VL2')->pluck('id'))->exists();              
+            $VL3 = User::where('id',$ver[1])->where('role',Role::select('id')->where('kode','VL3')->pluck('id'))->exists();  
+            $case1 = ($VL2 && $VL3) ? true : false;
+            // case 2
+            $VL2s = User::where('id',$ver[1])->where('role',Role::select('id')->where('kode','VL2')->pluck('id'))->exists();              
+            $VL3s = User::where('id',$ver[0])->where('role',Role::select('id')->where('kode','VL3')->pluck('id'))->exists();  
+            $case2 = ($VL2s && $VL3s) ? true : false;
+
+            if(!$case1 && !$case2)
+            {
+                toastr()->error('Invalid verifikator case 1', ['timeOut' => 5000]);
+                return back()->withInput();
+            } 
+
+        }
+        // verifikator 1 tahap
+        else
+        {
+            $VL1 = User::where('id',$ver)->where('role',Role::select('id')->where('kode','VL1')->pluck('id'))->exists();  
+            if(!$VL1)
+            {
+                toastr()->error('Invalid verifikator', ['timeOut' => 5000]);
+                return back()->withInput();
+            }                 
+        }
+
+
+        $header = [$request->noreg, $request->pengajuan, $request->namaPemohon, $request->hp, $request->alamatPemohon, $request->namaBangunan, $request->fungsi, $request->alamatBangunan];                
 
         $head = new Verifikasi;
         $head->village = $request->des;
         $head->header = json_encode($header);
-        $head->nomor = $request->name;
+        $head->nomor = nomor();
+        $head->reg = $request->noreg;
         $head->type = $request->type;
+        $head->email = $request->email;
         $head->status = 5;
         $head->verifikator = implode(",",$request->verifikator);
         $head->step = count($request->verifikator);
@@ -180,8 +224,7 @@ class HeadController extends Controller
      */
     public function update(Request $request, Verifikasi $verifikasi)
     {
-        $rule = [                   
-            'name' => 'required',           
+        $rule = [                            
             'type'=> 'required',
             'verifikator'=>'required',
             'namaPemohon' => 'required',           
@@ -190,19 +233,61 @@ class HeadController extends Controller
             'alamatBangunan'=> 'required', 
             'pengajuan'=> 'required', 
             'fungsi'=> 'required', 
-            'noreg'=> 'required', 
+            'noreg'=> 'required|unique:heads,reg,'.$verifikasi->id, 
+            'email'=> 'required|unique:heads,email,'.$verifikasi->id,             
             'dis'=> 'required', 
             'des'=> 'required', 
             'hp'=> 'required',                                           
             ];
-        $message = ['required'=>'Field ini harus diisi'];
+        $message = ['required'=>'Field ini harus diisi','unique'=>'Field ini sudah ada'];
         $request->validate($rule,$message);
 
+        // validasi tahap
+        if(count($request->verifikator) > 2)
+        {
+            toastr()->error('Verifikator maksimal 2', ['timeOut' => 5000]);
+            return back()->withInput();
+        }
+
+        $ver = $request->verifikator;
+
+        // validasi 2 tahap
+        if(count($ver) > 1)
+        {
+            // case 1
+            $VL2 = User::where('id',$ver[0])->where('role',Role::select('id')->where('kode','VL2')->pluck('id'))->exists();              
+            $VL3 = User::where('id',$ver[1])->where('role',Role::select('id')->where('kode','VL3')->pluck('id'))->exists();  
+            $case1 = ($VL2 && $VL3) ? true : false;
+            // case 2
+            $VL2s = User::where('id',$ver[1])->where('role',Role::select('id')->where('kode','VL2')->pluck('id'))->exists();              
+            $VL3s = User::where('id',$ver[0])->where('role',Role::select('id')->where('kode','VL3')->pluck('id'))->exists();  
+            $case2 = ($VL2s && $VL3s) ? true : false;
+
+            if(!$case1 && !$case2)
+            {
+                toastr()->error('Invalid verifikator', ['timeOut' => 5000]);
+                return back()->withInput();
+            } 
+
+        }
+        // verifikator 1 tahap
+        else
+        {
+            $VL1 = User::where('id',$ver)->where('role',Role::select('id')->where('kode','VL1')->pluck('id'))->exists();  
+            if(!$VL1)
+            {
+                toastr()->error('Invalid verifikator', ['timeOut' => 5000]);
+                return back()->withInput();
+            }                 
+        }
+
+
         $header= [$request->noreg, $request->pengajuan, $request->namaPemohon, $request->hp, $request->alamatPemohon, $request->namaBangunan, $request->fungsi, $request->alamatBangunan];                
-        $head->village = $request->des;
-        $head->header = json_encode($header);
-        $verifikasi->nomor = $request->name;
+        $verifikasi->village = $request->des;
+        $verifikasi->header = json_encode($header);     
         $verifikasi->type = $request->type;
+        $verifikasi->reg = $request->noreg;
+        $verifikasi->email = $request->email;
         $verifikasi->verifikator = implode(",",$request->verifikator);
         $verifikasi->step = count($request->verifikator);
         $verifikasi->save();

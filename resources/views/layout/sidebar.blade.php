@@ -4,36 +4,81 @@
             <i class="bi bi-grid-fill"></i>
             <span>Dashboard</span>
         </a>                            
-    </li>                        
-
-    <li class="sidebar-item has-sub {{ (Request::segment(1)) == 'dokumen' ? 'active' : null }}">
-        <a href="#" class="sidebar-link">
-            <i class="bi bi-files"></i> 
-            <span>Dokumen</span>
-        </a>            
-        <ul class="submenu submenu-{{ (Request::segment(1)) == 'dokumen' ? 'open' : 'closed' }}" style="--submenu-height: 86px;">                 
-
-            @if(auth()->user()->ijin('master_formulir'))
-                <li class="submenu-item {{ (request()->routeIs('verifikasi.index')) ? 'active' : null }}">
-                    <a href="{{route('verifikasi.index')}}" class="submenu-link">Verifikasi</a>                                           
-                </li>
-                <li class="submenu-item {{ (request()->routeIs('schedule.index')) ? 'active' : null }}">
-                    <a href="{{route('schedule.index')}}" class="submenu-link">Jadwal</a>                                           
-                </li>
-                <li class="submenu-item {{ (request()->routeIs('consultation.index')) ? 'active' : null }}">
-                    <a href="{{route('consultation.index')}}" class="submenu-link">Konsultasi</a>                                           
-                </li>
-            @endif
-
-            @if(auth()->user()->ijin('doc_formulir'))
-                <li class="submenu-item {{ (request()->routeIs('verification.index')) ? 'active' : null }}">
-                    <a href="{{route('verification.index')}}" class="submenu-link">Verifikasi</a>                                           
-                </li>
-            @endif
-            
-        </ul>            
     </li>
     
+    @if(auth()->user()->ijin('bak'))
+        <li class="sidebar-item has-sub {{ (Request::segment(1)) == 'task' ? 'active' : null }}">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Task</span>
+            </a>
+            <ul class="submenu submenu-{{ (Request::segment(1)) == 'task' ? 'open' : 'closed' }}" style="--submenu-height: 86px;">  
+                <li class="submenu-item {{ (request()->routeIs('news.index')) ? 'active' : null }}">
+                    <a href="{{route('news.index')}}"  class="submenu-link">BAK</a>
+                </li>                                
+                <li class="submenu-item {{ (request()->routeIs('meet.index')) ? 'active' : null }}">
+                    <a href="{{route('meet.index')}}"  class="submenu-link">BARP</a>
+                </li> 
+                <li class="submenu-item {{ (request()->routeIs('attach.index')) ? 'active' : null }}">
+                    <a href="{{route('attach.index')}}" class="submenu-link">Lampiran PBG</a>                                           
+                </li>
+                <li class="submenu-item {{ (request()->routeIs('tax.index')) ? 'active' : null }}">
+                    <a href="{{route('tax.index')}}" class="submenu-link">Retribusi</a>                                           
+                </li>                                                             
+            </ul>
+        </li>
+    @endif
+
+    @if(auth()->user()->ijin('doc_formulir'))
+        <li class="sidebar-item {{ (Request::segment(1)) == 'task' ? 'active' : null }}">
+            <a href="{{route('verification.index')}}"  class="sidebar-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Task</span>
+            </a>      
+        </li>
+    @endif
+
+    @if(auth()->user()->ijin('verifikasi_bak'))
+        <li class="sidebar-item {{ (request()->routeIs('bak.verifikasi')) ? 'active' : null }}">
+            <a href="{{route('bak.verifikasi')}}"  class="sidebar-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>BAK</span>
+            </a>      
+        </li>
+        <li class="sidebar-item {{ (request()->routeIs('barp.verifikasi')) ? 'active' : null }}">
+            <a href="{{route('barp.verifikasi')}}"  class="sidebar-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>BARP</span>
+            </a>      
+        </li>
+    @endif
+
+    @if(auth()->user()->ijin('master_formulir'))
+        <li class="sidebar-item {{ (request()->routeIs('req.index')) ? 'active' : null }}">
+            <a href="{{route('req.index')}}"  class="sidebar-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Permohonan</span>
+            </a>      
+        </li>
+        <li class="sidebar-item has-sub {{ (Request::segment(1)) == 'dokumen' ? 'active' : null }}">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-file-text"></i>
+                <span>Dokumen</span>
+            </a>            
+            <ul class="submenu submenu-{{ (Request::segment(1)) == 'dokumen' ? 'open' : 'closed' }}" style="--submenu-height: 86px;">                 
+                    <li class="submenu-item {{ (request()->routeIs('verifikasi.index')) ? 'active' : null }}">
+                        <a href="{{route('verifikasi.index')}}" class="submenu-link">Verifikasi</a>                                           
+                    </li>
+                    <li class="submenu-item {{ (request()->routeIs('consultation.index')) ? 'active' : null }}">
+                        <a href="{{route('consultation.index')}}" class="submenu-link">Konsultasi</a>                                           
+                    </li>
+                    <li class="submenu-item {{ (request()->routeIs('schedule.index')) ? 'active' : null }}">
+                        <a href="{{route('schedule.index')}}" class="submenu-link">Jadwal Surat</a>                                           
+                    </li>                                                     
+                </ul>            
+        </li>
+    @endif           
+        
     @if(auth()->user()->ijin('master'))
         <li class="sidebar-item has-sub {{ (Request::segment(1)) == 'master' ? 'active' : null }}">
             <a href="#" class="sidebar-link">

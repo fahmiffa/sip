@@ -10,6 +10,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Consultation;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -73,4 +75,6 @@ class User extends Authenticatable
      
         
     }
+
+
 }

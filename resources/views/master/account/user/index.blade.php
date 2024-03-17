@@ -27,6 +27,7 @@
                                 <th>No.</th>
                                 <th>Name</th>      
                                 <th>Email</th>              
+                                <th>Role</th>              
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -36,6 +37,7 @@
                                 <td>{{$loop->iteration}}</td>
                                 <td>{{$item->name}}</td>     
                                 <td>{{$item->email}}</td>     
+                                <td>{{$item->roles->name}}</td>     
                                 <td>                
                                     <form onsubmit="return confirm('Apakah Anda Yakin Menghapus ?');" action="{{ route('user.destroy', $item->id) }}" method="POST">
                                         <a href="{{ route('user.edit', $item->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>                                       

@@ -196,6 +196,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Mews\Captcha\CaptchaServiceProvider::class,
 
     ],
 
@@ -213,7 +214,8 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,    
-        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class  
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+        'Captcha' => Mews\Captcha\Facades\Captcha::class,  
     ])->toArray(),
 
 ];

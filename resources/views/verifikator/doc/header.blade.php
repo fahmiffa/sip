@@ -21,7 +21,7 @@
                 <td width="40%" style="border:none">No. Registrasi </td>
                 <td width="60%" style="border:none">: {{$header[0]}} </td>
                 <td width="40%" style="border:none">Pengajuan </td>
-                <td width="60%" style="border:none">: {{$header[1]}}</td>
+                <td width="60%" style="border:none">: {{strtoupper($header[1])}}</td>
             </tr>
             <tr>
                 <td width="40%" style="border:none">Nama Pemohon </td>
@@ -37,7 +37,7 @@
                 <td width="40%" style="border:none">Nama Bangunan </td>
                 <td width="60%" style="border:none">: {{$header[5]}}</td>
                 <td width="40%" style="border:none">Fungsi </td>
-                <td width="60%" style="border:none">: {{$header[6]}}</td>
+                <td width="60%" style="border:none">: {{ucwords($header[6])}}</td>
             </tr>
             <tr>
                 <td width="40%" style="border:none;vertical:align:top">Alamat Bangunan </td>

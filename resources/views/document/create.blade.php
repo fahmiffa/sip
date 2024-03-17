@@ -28,12 +28,7 @@
                         <div class="form-group row mb-3">
                             <div class="col-md-6">
                                 <label>No Dokumen</label>
-                                @if(old('name'))
-                                    <input type="text" name="name" value="{{old('name')}}" class="form-control">             
-                                @else
-                                    <input type="text" name="name" value="{{isset($verifikasi) ? $verifikasi->nomor : nomor()}}"   class="form-control">             
-                                @endif                                
-                                @error('name')<div class='small text-danger text-left'>{{$message}}</div>@enderror
+                                <p class="form-control-static mt-1">{{nomor()}}</p>                               
                             </div>
 
                             <div class="col-md-6">
@@ -55,7 +50,7 @@
 
                         @include('document.header')
                                                 
-                        <div class="form-group row mb-3">        
+                        <div class="form-group row mb-3">                    
                             <div class="col-md-8 mb-3">
                                 <label>Verifikator</label>              
                                 <select class="choices form-select multiple-remove" name="verifikator[]" multiple="multiple">

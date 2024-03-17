@@ -15,7 +15,7 @@
                         <h5 class="card-title">Data {{$data}}</h5>
                     </div>
                     <div class="p-2">
-                        <a href="{{route('permission.create')}}" class="btn btn-primary btn-sm">Create {{$data}}</a>
+                        <!--<a href="{{route('permission.create')}}" class="btn btn-primary btn-sm">Create {{$data}}</a>-->
                     </div>
                 </div>       
             </div>
@@ -27,7 +27,7 @@
                                 <th>No.</th>
                                 <th>Name</th>       
                                 <th>Parameter</th>              
-                                <th>Action</th>
+                                {{-- <th>Action</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -36,14 +36,14 @@
                                 <td>{{$loop->iteration}}</td>
                                 <td>{{$item->name}}</td>   
                                 <td>{{$item->parameter}}</td>     
-                                <td>                
+                                {{-- <td>                
                                     <form onsubmit="return confirm('Apakah Anda Yakin Menghapus ?');" action="{{ route('permission.destroy', $item->id) }}" method="POST">
                                         <a href="{{ route('permission.edit', $item->id) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                                     </form>
-                                </td>                    
+                                </td>                     --}}
                             </tr>            
                             @endforeach      
                         </tbody>

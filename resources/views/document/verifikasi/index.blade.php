@@ -46,12 +46,10 @@
                             <form action="{{ route('nexts.verifikasi', ['id' => md5($head->id)]) }}" method="post">
                                 @csrf                                                 
                                 @include('document.verifikasi.steps')                
-                                <div class="col-md-12">
-                                    <div class="col-md-12">
-                                        <div class="d-flex justify-content-between">
-                                            <button class="btn btn-primary rounded-pill">Save</button>                                     
-                                        </div>
-                                    </div>
+                                <div class="col-md-12 my-3">
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-primary rounded-pill">Save</button>                                     
+                                    </div>                               
                                 </div>
                             </form>  
                         @endif                                         
@@ -66,4 +64,41 @@
 
     @push('js')
         <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>   
+        <script>
+
+            function remove(e)
+            {        
+                e.parentNode.remove();
+            }
+        
+            $('#add-item').on('click', function() {                         
+                var n = $(':radio').length/3+1;                          
+                var clonedDiv = '<div class="row mb-3">\
+                                 <div class="col-md-3">\
+                                    <input type="text" class="form-control" name="nameOther['+n+']" placeholder="item name"></div>\
+                                 <div class="col-md-5">\
+                                    <div class="d-flex justify-content-center">\
+                                        <div class="form-check d-inline-block">\
+                                            <input class="form-check-input" type="radio" name="item['+n+']" value="1">\
+                                            <label class="form-check-label">Ada</label>\
+                                        </div>\
+                                        <div class="form-check d-inline-block mx-3">             \
+                                            <input class="form-check-input" type="radio" name="item['+n+']" value="0" checked>\
+                                            <label class="form-check-label">Tidak Ada</label>\
+                                        </div>\
+                                        <div class="form-check d-inline-block">\
+                                            <input class="form-check-input" type="radio" name="item['+n+']" value="2">\
+                                            <label class="form-check-label">Tidak Perlu</label>\
+                                        </div>\
+                                    </div>\
+                                 </div>\
+                                 <div class="col-md-3">\
+                                    <textarea class="form-control" name="saranOther['+n+']" rows="2"></textarea>\
+                                 </div>\
+                                 <button class="btn btn-danger btn-sm my-auto" style="width:fit-content;height:fit-content" onclick="remove(this)"  type="button"><i class="bi bi-trash"></i></button>\
+                                 <\div>\
+                                ';
+                $('#input').append(clonedDiv);
+            });
+        </script>
     @endpush
